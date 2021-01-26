@@ -4,10 +4,10 @@
 
 # Program Flow
 1. Step 1
-  a. Validation 
-  b. 3 possible outcomes
+  1. Validation 
+  2. 3 possible outcomes
 2. Step 2
-  a. Final validation 
-  b. 4 possible outcomes
+  1. Final validation 
+  2. 4 possible outcomes
 
 # 
