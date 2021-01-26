@@ -1,0 +1,21 @@
+<resources>
+    <string name="app_name">SpammieWhammie</string>
+    <string name="default_phone_number">No Phone Number Loaded</string>
+    <string name="default_call_date">0-0-0000</string>
+    <string name="default_call_type">null type</string>
+    <string name="default_call_duration">-1 seconds</string>
+    <string name="default_call_via_number">malicious number</string>
+    <string name="federal_report_url">https://www.donotcall.gov/report.html</string>
+    <string name="federal_report_url_step1_postfix">#step1</string>
+    <string name="federal_report_url_step2_postfix">#step2</string>
+    <string name="federal_report_url_step3_postfix">#step3</string>
+    <string name="main_menu_item_contact_info">Contact Info</string>
+    <string name="contact_info_form_first_name_hint">First Name</string>
+    <string name="contact_info_form_last_name_hint">Last Name</string>
+    <string name="contact_info_form_street_address_1_hint">Street Address 1</string>
+    <string name="contact_info_form_street_address_2_hint">Street Address 2</string>
+    <string name="contact_info_form_city_hint">City</string>
+    <string name="contact_info_form_state_hint">State</string>
+    <string name="contact_info_form_zip_code_hint">Zip Code</string>
+    <string name="contact_info_form_button_text">Save</string>
+</resources>
