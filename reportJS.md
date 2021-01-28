@@ -43,4 +43,7 @@
     - run chkConsumerCompanyPhone()
   - 4 possible outcomes
 
-# 
+# Other Notes
+- Subject Matter # 8 -> "partials/report/step2DebtCollectorCall"
+- Subject Matter #15 -> "partials/report/step2SurveyCall"
+- Text Message Step 2 -> "partials/report/step2MobileCall"
