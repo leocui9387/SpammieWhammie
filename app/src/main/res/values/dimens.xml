@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="contact_info_button_padding">16dp</dimen>
+    <dimen name="report_margin">16dp</dimen>
+    <dimen name="contact_info_margin">16dp</dimen>
 </resources>

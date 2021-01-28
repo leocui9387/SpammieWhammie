@@ -1,77 +1,68 @@
 package com.basicbear.spammiewhammie.ui.report
 
-import android.graphics.Bitmap
-import android.os.Build
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.webkit.ValueCallback
-import android.webkit.WebResourceRequest
-import android.webkit.WebView
-import android.webkit.WebViewClient
+import android.view.WindowManager
+import android.widget.*
 import androidx.fragment.app.Fragment
 import com.basicbear.spammiewhammie.R
+import com.basicbear.spammiewhammie.ui.contact_info.ContactInfoFragment
 import com.basicbear.spammiewhammie.ui.contact_info.PersonalInfo
 import com.basicbear.spammiewhammie.ui.main.PhoneCall
+import java.time.Instant
 
 private const val TAG = "ReportFragment"
+private const val contactInfoParameterTag = "ReportFragment ContactInfo Parameter"
 
-class ReportFragment:Fragment() {
+class ReportFragment:Fragment(
+
+
+) {
+
+    interface Callbacks{
+        fun closeSoftKeyboard(view:View)
+    }
 
     companion object {
-
-
         val fragmentTag = "ReportFragment"
-        fun newInstance(): ReportFragment {
-            return ReportFragment()
+        fun newInstance(contactInfo:PersonalInfo): ReportFragment {
+            return ReportFragment().apply {
+                arguments= Bundle().apply {
+                    putParcelable(contactInfoParameterTag, contactInfo)
+                }
+            }
         }
     }
 
-    private lateinit var reportWebView: WebView
+    private val submit_complaint_url = "https://www2.donotcall.gov/save-complaint"
+
+    private var callbacks:Callbacks? = null
+
     private lateinit var phoneCall: PhoneCall
     private lateinit var personalInfo: PersonalInfo
+    private lateinit var submitModel:GovModel
 
-    private lateinit var javascript_step1:String
-    private lateinit var javascript_step2:String
+    private lateinit var wasPrerecorded:Switch
+    private lateinit var isMobileCall:Switch
+    private lateinit var askedToStop:Switch
+    private lateinit var haveDoneBusiness:Switch
+    private lateinit var subjectMatter:Spinner
+    private lateinit var callerName:EditText
+    private lateinit var comments:EditText
+    private lateinit var submitButton:Button
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        callbacks = context as Callbacks?
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-
-        personalInfo = PersonalInfo()
-        personalInfo.getContactInfo(context!!)
-
-        //personalInfo = arguments?.getParcelable(PersonalInfo_ExtraTag)!! //?: PersonalInfo()
-
-        val numOnly:Regex = Regex("[^0-9]")
-        personalInfo.MyPhoneNumber = personalInfo.MyPhoneNumber.replace(numOnly, "")
-
-        javascript_step1 =
-                "console.log(\"s Step1 \" + dnc_app.config.submit_complaint_url); " + //https://www2.donotcall.gov/save-complaint
-                "window.ClearData=function(){return false;};" +
-                "document.getElementById(\"PhoneTextBox\").value = '${personalInfo.MyPhoneNumber}'; " +
-                "$(\"#DateOfCallTextBox\").val(\"${phoneCall.MediumDate()}\"); "+
-                "$(\"#TimeOfCallDropDownList\").val(${phoneCall.DateHour()}); "+
-                "$(\"#ddlMinutes\").val(${phoneCall.DateMinute()}); " +
-                "$(\"#PhoneCallRadioButton\").prop('checked',true); ";
-
-                /*
-                "$(\"#PhoneTextBox\").val(\"${personalInfo.MyPhoneNumber}\"); " +
-                "$(\"#DateOfCallTextBox\").val(\"${phoneCall.MediumDate()}\"); "+
-                "$(\"#TimeOfCallDropDownList\").val(${phoneCall.DateHour()}); "+
-                "$(\"#ddlMinutes\").val(${phoneCall.DateMinute()}); " +
-                "$(\"#PhoneCallRadioButton\").prop('checked',true); "
-                 */
-
-        javascript_step2 =" console.log(\"js Step2\"); " +
-                "$(\"#CallerPhoneNumberTextBox\").val(\"${phoneCall.number}\"); " +
-                "$(\"#FirstNameTextBox\").val(\"${personalInfo.FirstName}\"); "+
-                "$(\"#LastNameTextBox\").val(${personalInfo.LastName}); "+
-                "$(\"#StreetAddressTextBox\").val(${personalInfo.StreetAddress}); "+
-                "$(\"#CityTextBox\").val(${personalInfo.City}); "+
-                "$(\"#StateDropDownList\").val(${personalInfo.State}); "+
-                "$(\"#ZipCodeTextBox\").val(${personalInfo.ZIP}); "+
-
+        personalInfo = arguments?.getParcelable(contactInfoParameterTag)?: PersonalInfo()
+        activity?.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
         super.onCreate(savedInstanceState)
     }
 
@@ -80,91 +71,56 @@ class ReportFragment:Fragment() {
         Log.d(TAG, "oncreateView triggered")
         val view = inflater.inflate(R.layout.report_fragment, container, false)
 
-        reportWebView = view.findViewById(R.id.report_web_view)
-        reportWebView.settings.javaScriptEnabled = true
-        reportWebView.settings.javaScriptCanOpenWindowsAutomatically = true
+        wasPrerecorded = view.findViewById(R.id.report_form_switch_wasPrerecorded)
+        isMobileCall= view.findViewById(R.id.report_form_switch_isMobileCall)
+        askedToStop= view.findViewById(R.id.report_form_switch_askedToStop)
+        haveDoneBusiness= view.findViewById(R.id.report_form_switch_haveDoneBusiness)
+        subjectMatter= view.findViewById(R.id.report_form_subjectMatter)
+        callerName = view.findViewById(R.id.report_form_caller_name)
 
-        WebView.setWebContentsDebuggingEnabled(true)
+        comments= view.findViewById(R.id.report_form_comments)
+        comments.setOnFocusChangeListener { v, hasFocus ->
+            if(!hasFocus) callbacks?.closeSoftKeyboard(view)
+        }
 
-        reportWebView.loadUrl(getString(R.string.federal_report_url) + getString(R.string.federal_report_url_step1_postfix))
-
-        var loadingFinished = true
-        var redirect = false
-
-        reportWebView.webViewClient = object: WebViewClient(){
-
-            override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest): Boolean {
-                if (!loadingFinished) {
-                    redirect = true
-                }
-                loadingFinished = false
-                view?.loadUrl(request.url.toString())
-                return true
-            }
-
-            override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
-                super.onPageStarted(view, url, favicon)
-                loadingFinished = false
-            }
-
-            override fun onPageFinished(view: WebView?, url: String?) {
-                super.onPageFinished(view, url)
-
-                if(!redirect ){
-                    loadingFinished = true
-                    autoFillData(view,url)
-                }else{
-                    redirect=false
-                }
-            }
+        submitButton = view.findViewById(R.id.report_submit_button)
+        submitButton.setOnClickListener{
+            Toast.makeText(context,"LEO is awesome", Toast.LENGTH_LONG).show()
         }
 
         return view
     }
 
-    fun autoFillData(view: WebView?, url: String?){
-        var javascript =""
-
-        if(url.equals(getString(R.string.federal_report_url) + getString(R.string.federal_report_url_step1_postfix))){
-            javascript = javascript_step1
-        }else if(url.equals(getString(R.string.federal_report_url) + getString(R.string.federal_report_url_step2_postfix))){
-            javascript = javascript_step2
-        }else if(url.equals(getString(R.string.federal_report_url) + getString(R.string.federal_report_url_step3_postfix))){
-            //return to main activity
-        }
-
-
-        //"javascript:\$(document).ready(function() {" + javascript +"});"
-        if(Build.VERSION.SDK_INT > 19){
-            //view?.loadUrl("javascript:$(document).ready(function() {" + javascript +"});")
-            //javascript = "document.addEventListener('DOMContentLoaded', function(event) {" + javascript + "})"
-            //javascript = "window.onload= (function(){ " +javascript + "})();"
-            view?.evaluateJavascript(javascript, ValueCallback {
-                //s:String -> Log.d(TAG,"Value of EvaluateJavascript is working!")
-            })
-        }else{
-            view?.loadUrl("javascript:window.onload= (function(){ " + javascript + "})();")
-        }
-    }
-
-
     fun updatePhoneCall(newPhoneCall: PhoneCall){
         phoneCall= newPhoneCall
     }
 
-    fun WebViewCanGoBack():Boolean{
-        return reportWebView.canGoBack()
+    private fun loadFormData():GovModel{
+        var newModel = GovModel(
+                personalInfo.MyPhoneNumber,
+                phoneCall.MediumDate(),
+                phoneCall.DateHour().toString(),
+                phoneCall.DateMinute().toString(),
+                if(wasPrerecorded.isChecked) "Y" else "N",
+                isMobileCall.isChecked.toString(),
+                subjectMatter.selectedItem.toString(),
+                phoneCall.number,
+                callerName.text.toString(),
+                if(haveDoneBusiness.isChecked) "Y" else "N" ,
+                askedToStop.isChecked.toString(),
+                personalInfo.FirstName,
+                personalInfo.LastName,
+                personalInfo.StreetAddress,
+                personalInfo.StreetAddress2,
+                personalInfo.City,
+                personalInfo.State,
+                personalInfo.ZIP,
+                comments.text.toString(),
+                "en",
+                "Y"
+            )
+        return newModel
     }
 
-    fun WebViewGoBack(){
-        reportWebView.goBack()
-    }
 
-    fun ClearWebView(){
-        if (Build.VERSION.SDK_INT < 18) {
-            reportWebView.clearView();
-        } else {
-            reportWebView.loadUrl("about:blank");
-        }
-    }
 }

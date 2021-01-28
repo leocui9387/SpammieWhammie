@@ -13,22 +13,31 @@ import android.view.ViewGroup
 import android.widget.Button
 import androidx.fragment.app.Fragment
 import com.basicbear.spammiewhammie.R
+import com.basicbear.spammiewhammie.ui.main.MainFragment
+import com.basicbear.spammiewhammie.ui.main.PhoneCall
 import com.google.android.material.textfield.TextInputEditText
 import com.google.gson.Gson
 import java.io.*
 
 private const val TAG="ContactInfoFragment"
-
+private const val contactInfoTag = "ContactInfoParameter"
 private const val write_permission_code = 1
 private const val read_permission_code = 2
 
 class ContactInfoFragment:Fragment() {
+    interface Callbacks{
+        fun onContactInfoSaveSelected()
+    }
 
     companion object {
-        val fragmentTAG = "ContactInfoFragment"
+        val fragmentTag = "ContactInfoFragment"
 
-        fun newInstance(): ContactInfoFragment {
-            return ContactInfoFragment()
+        fun newInstance(contactInfo: PersonalInfo): ContactInfoFragment {
+            return ContactInfoFragment().apply {
+                arguments = Bundle().apply {
+                    putParcelable(contactInfoTag, contactInfo)
+                }
+            }
         }
     }
 
@@ -42,7 +51,13 @@ class ContactInfoFragment:Fragment() {
     private lateinit var zipInfo: TextInputEditText
     private lateinit var saveButton: Button
 
+    private var callbacks: Callbacks? = null
     private val filesDir = context?.applicationContext?.filesDir
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        callbacks = context as Callbacks?
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -51,8 +66,8 @@ class ContactInfoFragment:Fragment() {
     ): View? {
 
         val view = inflater.inflate(R.layout.contact_info_fragment, container, false)
-        personalInfo = PersonalInfo()
-        personalInfo.getContactInfo(context!!)
+
+        personalInfo = arguments?.getParcelable(contactInfoTag)?:PersonalInfo()
 
         firstName = view.findViewById(R.id.contact_info_form_first_name)
         firstName.setText(personalInfo.FirstName)
@@ -86,7 +101,7 @@ class ContactInfoFragment:Fragment() {
             personalInfo.State = stateInfo.text.toString()
             personalInfo.ZIP = zipInfo.text.toString()
 
-            personalInfo.saveToFile(context!!)
+            callbacks?.onContactInfoSaveSelected()
             requireActivity().finish()
         }
 

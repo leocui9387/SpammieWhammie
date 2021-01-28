@@ -123,6 +123,4 @@
         android:layout_height="wrap_content"
         android:text="@string/contact_info_form_button_text" />
 
-
-
 </LinearLayout>

@@ -1,15 +1,20 @@
 package com.basicbear.spammiewhammie.ui.contact_info
 
 
+import android.Manifest
+import android.app.Activity
 import android.content.Context
+import android.content.pm.PackageManager
 import android.os.Parcel
 import android.os.Parcelable
+import android.telephony.TelephonyManager
 import android.util.Log
 import com.google.gson.Gson
 import java.io.*
 
 private const val TAG = "PersonalInfo object"
 private const val fileName = "contact_info_file.txt"
+private const val PERMISSIONS_REQUEST_READ_PHONE_STATE = 10
 
 data class PersonalInfo (
     var MyPhoneNumber:String ="",
@@ -47,11 +52,11 @@ data class PersonalInfo (
         return 0
     }
 
-    fun getContactInfo(context:Context){
+    fun getContactInfo(activity: Activity){
         var infoBuff:PersonalInfo
         var dataJSON: String
         try {
-            val fis: FileInputStream = context!!.openFileInput(fileName)
+            val fis: FileInputStream = activity.openFileInput(fileName)
             val r = BufferedReader(InputStreamReader(fis))
             dataJSON = r.readText()
             r.close()
@@ -74,13 +79,13 @@ data class PersonalInfo (
 
     }
 
-    fun saveToFile(context:Context){
+    fun saveToFile(activity: Activity){
 
         try{
             var gson: Gson = Gson()
             var infoBuff:String = gson.toJson(this)
 
-            val fos: FileOutputStream = context!!.openFileOutput(fileName, Context.MODE_PRIVATE)
+            val fos: FileOutputStream = activity.openFileOutput(fileName, Context.MODE_PRIVATE)
             val out: Writer = OutputStreamWriter(fos)
 
             out.write(infoBuff)
@@ -91,6 +96,26 @@ data class PersonalInfo (
 
     }
 
+    fun GetThisPhoneNumber(activity: Activity){
+        if(!MyPhoneNumber.isEmpty()) return
+
+        if(activity.checkSelfPermission(Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
+            activity.requestPermissions(
+                    arrayOf(Manifest.permission.READ_PHONE_STATE),
+                    PERMISSIONS_REQUEST_READ_PHONE_STATE
+            )
+        }
+
+            val tMgr: TelephonyManager = activity.getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
+            MyPhoneNumber = tMgr.line1Number?:""
+            saveToFile(activity)
+
+    }
+
+    fun getFormattedPhoneNumber():String{
+        val numOnly:Regex = Regex("[^0-9]")
+        return MyPhoneNumber.replace(numOnly, "")
+    }
 
     companion object CREATOR : Parcelable.Creator<PersonalInfo> {
         override fun createFromParcel(parcel: Parcel): PersonalInfo {

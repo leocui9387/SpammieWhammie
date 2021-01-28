@@ -11,7 +11,8 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.SpammieWhammie">
+        android:theme="@style/Theme.SpammieWhammie"
+        >
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
             android:value="ca-app-pub-2984887454634255~3392062867"/>
@@ -22,9 +23,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ReportActivity"></activity>
-        <activity android:name=".ContactInfoActivity"></activity>
-
     </application>
 
 </manifest>

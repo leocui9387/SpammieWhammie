@@ -2,12 +2,10 @@ package com.basicbear.spammiewhammie.ui.main
 
 import android.Manifest
 import android.content.Context
-import android.content.Intent
 import android.content.pm.PackageManager
 import android.database.Cursor
 import android.os.Bundle
 import android.provider.CallLog
-import android.telephony.TelephonyManager
 import android.util.Log
 import android.view.*
 import android.widget.FrameLayout
@@ -16,35 +14,37 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.basicbear.spammiewhammie.ContactInfoActivity
 import com.basicbear.spammiewhammie.R
-import com.basicbear.spammiewhammie.ReportActivity
-import com.basicbear.spammiewhammie.ui.contact_info.ContactInfoFragment
+
 import com.basicbear.spammiewhammie.ui.contact_info.PersonalInfo
-import com.basicbear.spammiewhammie.ui.report.ReportFragment
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.AdView
 import com.google.android.gms.ads.MobileAds
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import java.text.DateFormat
-import java.util.*
 
 
 private const val TAG ="MainFragment"
 private const val PERMISSIONS_REQUEST_READ_CALL_LOG = 100
-private const val PERMISSIONS_REQUEST_READ_PHONE_STATE = 10
+
+private const val contactInfoTag = "ContactInfoParameter"
 
 class MainFragment : Fragment() {
 
     companion object {
         val fragmentTag = "MainFragment"
-        fun newInstance():MainFragment {
-            return MainFragment()
+        fun newInstance(contactInfo: PersonalInfo): MainFragment {
+            return MainFragment().apply {
+                arguments = Bundle().apply {
+                    putParcelable(contactInfoTag, contactInfo)
+                }
+            }
         }
     }
 
     interface Callbacks{
         fun onCallSelected(phoneCall: PhoneCall)
+        fun onMenuContactInfoSelected()
     }
 
     private var callbacks:Callbacks? = null
@@ -64,6 +64,7 @@ class MainFragment : Fragment() {
             inflater: LayoutInflater, container: ViewGroup?,
             savedInstanceState: Bundle?
     ): View {
+        contactInfo = arguments?.getParcelable(contactInfoTag)?:PersonalInfo()
 
         val view = inflater.inflate(R.layout.main_fragment, container, false)
         phoneCallRV = view.findViewById(R.id.main_fragment_recycler_view)
@@ -85,9 +86,6 @@ class MainFragment : Fragment() {
 
         callbacks = context as Callbacks?
 
-        contactInfo = PersonalInfo()
-        contactInfo.getContactInfo(context!!)
-
         Log.d(TAG, "attached")
         if(context.checkSelfPermission(Manifest.permission.READ_CALL_LOG) != PackageManager.PERMISSION_GRANTED) {
             requestPermissions(
@@ -96,18 +94,8 @@ class MainFragment : Fragment() {
             )
         }
 
-        if(context.checkSelfPermission(Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
-            requestPermissions(
-                    arrayOf(Manifest.permission.READ_PHONE_STATE),
-                    PERMISSIONS_REQUEST_READ_PHONE_STATE
-            )
-        }
 
-        if(contactInfo.MyPhoneNumber.isEmpty()){
-            val tMgr:TelephonyManager = context?.getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
-            contactInfo.MyPhoneNumber = tMgr.line1Number?:""
-            contactInfo.saveToFile(context!!)
-        }
+
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -117,16 +105,9 @@ class MainFragment : Fragment() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if(item.itemId == R.id.main_menu_item_contact_info) {
-            /*
-            val intent = Intent(activity, ContactInfoActivity::class.java)
-            startActivity(intent)
-            */
-
-
-
+            callbacks?.onMenuContactInfoSelected()
             return true
         }
-
         return false
     }
 
