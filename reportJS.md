@@ -1,7 +1,12 @@
 # Important Constants
-- dnc_app.config.submit_complaint_url : https://www2.donotcall.gov/save-complaint
-
-
+- endpoint: "https://www2.donotcall.gov"
+  - submit_registration_url: endpoint + "/save-phone-registration",
+  - confirm_registration_url: endpoint + "/confirm-phone-registration",
+  - submit_verification_url: endpoint + "/save-phone-verification",
+  - submit_complaint_url: endpoint + "/save-complaint",
+  - complaint_step2_url: endpoint + "/complaint-step2",
+  - complaint_text_url: endpoint + "/complaint-text-message-link"
+  
 # Upload Model
 - phoneNumber
 - dateOfCall
