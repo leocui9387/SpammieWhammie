@@ -4,7 +4,7 @@
   - confirm_registration_url: endpoint + "/confirm-phone-registration",
   - submit_verification_url: endpoint + "/save-phone-verification",
   - submit_complaint_url: endpoint + "/save-complaint",
-  - complaint_step2_url: endpoint + "/complaint-step2",
+  - complaint_step2_url: endpoint + "/complaint-step2" (Doesn't appear to be used)
   - complaint_text_url: endpoint + "/complaint-text-message-link"
   
 # Upload Model
