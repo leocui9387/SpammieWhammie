@@ -10,50 +10,43 @@ import android.view.WindowManager
 import android.widget.*
 import androidx.fragment.app.Fragment
 import com.basicbear.spammiewhammie.R
-import com.basicbear.spammiewhammie.ui.contact_info.ContactInfoFragment
+import com.basicbear.spammiewhammie.Validation.AreaCodes
+import com.basicbear.spammiewhammie.Validation.GovModel
+import com.basicbear.spammiewhammie.Validation.DoNotCallApi
+import com.basicbear.spammiewhammie.Validation.Validation
 import com.basicbear.spammiewhammie.ui.contact_info.PersonalInfo
 import com.basicbear.spammiewhammie.ui.main.PhoneCall
-import java.time.Instant
 
 private const val TAG = "ReportFragment"
 private const val contactInfoParameterTag = "ReportFragment ContactInfo Parameter"
 
-class ReportFragment:Fragment(
-
-
-) {
+class ReportFragment(
+        private val contactInfo:PersonalInfo,
+        private val phoneCall: PhoneCall,
+        private val areaCodes: AreaCodes,
+        private val dncApi: DoNotCallApi
+        ):Fragment() {
 
     interface Callbacks{
         fun closeSoftKeyboard(view:View)
+        fun onComplaintSubmission()
     }
-
-    companion object {
-        val fragmentTag = "ReportFragment"
-        fun newInstance(contactInfo:PersonalInfo): ReportFragment {
-            return ReportFragment().apply {
-                arguments= Bundle().apply {
-                    putParcelable(contactInfoParameterTag, contactInfo)
-                }
-            }
-        }
-    }
-
-    private val submit_complaint_url = "https://www2.donotcall.gov/save-complaint"
 
     private var callbacks:Callbacks? = null
+    private lateinit var validation: Validation
 
-    private lateinit var phoneCall: PhoneCall
-    private lateinit var personalInfo: PersonalInfo
-    private lateinit var submitModel:GovModel
+    private lateinit var submitModel: GovModel
 
-    private lateinit var wasPrerecorded:Switch
-    private lateinit var isMobileCall:Switch
-    private lateinit var askedToStop:Switch
-    private lateinit var haveDoneBusiness:Switch
+    private lateinit var wasPrerecorded:RadioGroup
+    private lateinit var isMobileCall:RadioGroup
+    private lateinit var askedToStop:RadioGroup
+    private lateinit var haveDoneBusiness:RadioGroup
     private lateinit var subjectMatter:Spinner
     private lateinit var callerName:EditText
     private lateinit var comments:EditText
     private lateinit var submitButton:Button
+
+    private var viewCreated:Boolean = false
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -61,22 +54,35 @@ class ReportFragment:Fragment(
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        personalInfo = arguments?.getParcelable(contactInfoParameterTag)?: PersonalInfo()
+
         activity?.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
         super.onCreate(savedInstanceState)
+
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
-        Log.d(TAG, "oncreateView triggered")
         val view = inflater.inflate(R.layout.report_fragment, container, false)
 
-        wasPrerecorded = view.findViewById(R.id.report_form_switch_wasPrerecorded)
-        isMobileCall= view.findViewById(R.id.report_form_switch_isMobileCall)
-        askedToStop= view.findViewById(R.id.report_form_switch_askedToStop)
-        haveDoneBusiness= view.findViewById(R.id.report_form_switch_haveDoneBusiness)
+        wasPrerecorded = view.findViewById(R.id.report_form_wasPrerecorded_radio)
+        isMobileCall= view.findViewById(R.id.report_form_isMobileCall_radio)
+        askedToStop= view.findViewById(R.id.report_form_askedToStop_radio )
+        haveDoneBusiness= view.findViewById(R.id.report_form_haveDoneBusiness_radio)
+
         subjectMatter= view.findViewById(R.id.report_form_subjectMatter)
+        ArrayAdapter.createFromResource(
+                requireContext(),
+                R.array.report_form_subject_matter_spinner,
+                android.R.layout.simple_spinner_item
+        ).also { arrayAdapter ->
+            arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+            subjectMatter.adapter=arrayAdapter
+        }
+
         callerName = view.findViewById(R.id.report_form_caller_name)
+        callerName.setOnFocusChangeListener { v, hasFocus ->
+            if(!hasFocus) callbacks?.closeSoftKeyboard(view)
+        }
 
         comments= view.findViewById(R.id.report_form_comments)
         comments.setOnFocusChangeListener { v, hasFocus ->
@@ -85,42 +91,67 @@ class ReportFragment:Fragment(
 
         submitButton = view.findViewById(R.id.report_submit_button)
         submitButton.setOnClickListener{
-            Toast.makeText(context,"LEO is awesome", Toast.LENGTH_LONG).show()
-        }
 
+            submitModel = loadFormData()
+            validation = Validation(requireContext(),submitModel,dncApi,areaCodes)
+            Log.d(TAG,"validation text: "+ validation.validate())
+            Toast.makeText(context,"Validation Text: " , Toast.LENGTH_LONG).show()
+            callbacks?.onComplaintSubmission()
+        }
+        viewCreated = true
         return view
     }
 
-    fun updatePhoneCall(newPhoneCall: PhoneCall){
-        phoneCall= newPhoneCall
-    }
 
-    private fun loadFormData():GovModel{
+    private fun loadFormData(): GovModel {
         var newModel = GovModel(
-                personalInfo.MyPhoneNumber,
+                PersonalInfo.numbersOnly(contactInfo.MyPhoneNumber),
                 phoneCall.MediumDate(),
                 phoneCall.DateHour().toString(),
                 phoneCall.DateMinute().toString(),
-                if(wasPrerecorded.isChecked) "Y" else "N",
-                isMobileCall.isChecked.toString(),
+                wasPrerecorded_GovModel(),
+                isMobileCall_GovModel(),
                 subjectMatter.selectedItem.toString(),
-                phoneCall.number,
+                PersonalInfo.numbersOnly(phoneCall.number),
                 callerName.text.toString(),
-                if(haveDoneBusiness.isChecked) "Y" else "N" ,
-                askedToStop.isChecked.toString(),
-                personalInfo.FirstName,
-                personalInfo.LastName,
-                personalInfo.StreetAddress,
-                personalInfo.StreetAddress2,
-                personalInfo.City,
-                personalInfo.State,
-                personalInfo.ZIP,
+                haveDoneBusiness_GovModel(),
+                askedToStop_GovModel(),
+                contactInfo.FirstName,
+                contactInfo.LastName,
+                contactInfo.StreetAddress,
+                contactInfo.StreetAddress2,
+                contactInfo.City,
+                contactInfo.State,
+                contactInfo.ZIP,
                 comments.text.toString(),
-                "en",
+                "en-US",
                 "Y"
             )
         return newModel
     }
 
+    private fun wasPrerecorded_GovModel():String{
+        return  if(wasPrerecorded.checkedRadioButtonId == R.id.report_form_wasPrerecorded_radio_yes) "Y"
+                else if(wasPrerecorded.checkedRadioButtonId == R.id.report_form_wasPrerecorded_radio_no) "N"
+                else ""
+    }
+
+    private fun isMobileCall_GovModel():String{
+        return  if(isMobileCall.checkedRadioButtonId == R.id.report_form_isMobileCall_radio_yes) "Y"
+                else if(isMobileCall.checkedRadioButtonId == R.id.report_form_isMobileCall_radio_no) "N"
+                else ""
+    }
+
+    private fun haveDoneBusiness_GovModel():String{
+        return  if(haveDoneBusiness.checkedRadioButtonId == R.id.report_form_haveDoneBusiness_radio_yes) "Y"
+                else if(haveDoneBusiness.checkedRadioButtonId == R.id.report_form_haveDoneBusiness_radio_no) "N"
+                else ""
+    }
+
+    private fun askedToStop_GovModel():String{
+        return  if(askedToStop.checkedRadioButtonId == R.id.report_form_askedToStop_radio_yes) "Y"
+                else if(askedToStop.checkedRadioButtonId == R.id.report_form_askedToStop_radio_yes) "N"
+                else ""
+    }
 
 }

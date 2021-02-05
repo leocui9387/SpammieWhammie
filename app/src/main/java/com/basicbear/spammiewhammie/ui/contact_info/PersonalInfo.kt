@@ -18,6 +18,7 @@ private const val PERMISSIONS_REQUEST_READ_PHONE_STATE = 10
 
 data class PersonalInfo (
     var MyPhoneNumber:String ="",
+    var MyPhoneNumberOverride:Boolean = false,
     var FirstName:String="",
     var LastName:String = "",
     var StreetAddress:String ="",
@@ -25,31 +26,14 @@ data class PersonalInfo (
     var City:String ="",
     var State:String = "",
     var ZIP:String =""
-        ):Parcelable {
-    constructor(parcel: Parcel) : this(
-        parcel.readString()?:"deparcel failed",
-        parcel.readString()?:"deparcel failed",
-        parcel.readString()?:"deparcel failed",
-        parcel.readString()?:"deparcel failed",
-        parcel.readString()?:"deparcel failed",
-        parcel.readString()?:"deparcel failed",
-        parcel.readString()?:"deparcel failed"
-    ) {
-    }
+        ) {
 
-    override fun writeToParcel(parcel: Parcel, flags: Int) {
-        parcel.writeString(MyPhoneNumber)
-        parcel.writeString(FirstName)
-        parcel.writeString(LastName)
-        parcel.writeString(StreetAddress)
-        parcel.writeString(StreetAddress2)
-        parcel.writeString(City)
-        parcel.writeString(State)
-        parcel.writeString(ZIP)
-    }
+    companion object {
 
-    override fun describeContents(): Int {
-        return 0
+        fun numbersOnly(original: String): String {
+            val numOnly: Regex = Regex("[^0-9]")
+            return original.replace(numOnly, "")
+        }
     }
 
     fun getContactInfo(activity: Activity){
@@ -69,6 +53,7 @@ data class PersonalInfo (
         infoBuff = gson.fromJson(dataJSON,PersonalInfo::class.java)
 
         this.MyPhoneNumber =  infoBuff.MyPhoneNumber
+        this.MyPhoneNumberOverride =  infoBuff.MyPhoneNumberOverride
         this.FirstName =  infoBuff.FirstName
         this.LastName =  infoBuff.LastName
         this.StreetAddress =  infoBuff.StreetAddress
@@ -97,6 +82,7 @@ data class PersonalInfo (
     }
 
     fun GetThisPhoneNumber(activity: Activity){
+        if(MyPhoneNumberOverride) return
         if(!MyPhoneNumber.isEmpty()) return
 
         if(activity.checkSelfPermission(Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
@@ -112,19 +98,14 @@ data class PersonalInfo (
 
     }
 
-    fun getFormattedPhoneNumber():String{
-        val numOnly:Regex = Regex("[^0-9]")
-        return MyPhoneNumber.replace(numOnly, "")
+    fun validate():String{
+
+        MyPhoneNumber = PersonalInfo.numbersOnly(MyPhoneNumber)
+        if( MyPhoneNumber.length >= 10 ) return "Your phone number must have at least 10 digits."
+
+        val stateCodes:List<String> = "AL,AK,AZ,AR,CA,CO,CT,DE,FL,GA,HI,ID,IL,IN,IA,KS,KY,LA,ME,MD,MA,MI,MN,MS,MO,MT,NE,NV,NH,NJ,NM,NY,NC,ND,OH,OK,OR,PA,RI,SC,SD,TN,TX,UT,VT,VA,WA,WV,WI,WY,DC,GU,MH,MP,PR,VI,AE,AA,AP".split(",")
+        if( stateCodes.contains(State) ) return "Your state code is invalid."
+
+        return ""
     }
-
-    companion object CREATOR : Parcelable.Creator<PersonalInfo> {
-        override fun createFromParcel(parcel: Parcel): PersonalInfo {
-            return PersonalInfo(parcel)
-        }
-
-        override fun newArray(size: Int): Array<PersonalInfo?> {
-            return arrayOfNulls(size)
-        }
-    }
-
 }

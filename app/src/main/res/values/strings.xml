@@ -5,10 +5,11 @@
     <string name="default_call_type">null type</string>
     <string name="default_call_duration">-1 seconds</string>
     <string name="default_call_via_number">malicious number</string>
-    <string name="federal_report_url">https://www.donotcall.gov/report.html</string>
-    <string name="federal_report_url_step1_postfix">#step1</string>
-    <string name="federal_report_url_step2_postfix">#step2</string>
-    <string name="federal_report_url_step3_postfix">#step3</string>
+    <string name="federal_report_url">https://www.donotcall.gov/</string>
+    <string name="federal_report_url_step1_postfix">/report.html#step1</string>
+    <string name="federal_report_url_step2_postfix">/report.html#step2</string>
+    <string name="federal_report_url_step3_postfix">/report.html#step3</string>
+    <string name="federal_report_url_submit_postfix">/save-complaint</string>
     <string name="main_menu_item_contact_info">Contact Info</string>
     <string name="contact_info_form_first_name_hint">First Name</string>
     <string name="contact_info_form_last_name_hint">Last Name</string>
@@ -20,11 +21,12 @@
     <string name="contact_info_form_button_text">Save</string>
     <string name="report_form_button_text">Submit to the Feds</string>
     <string name="report_form_switch_wasPrerecorded">Was the call a recorded message or robocall?</string>
-    <string name="report_form_switch_isMobileCall">Did you receive a phone call or a mobile text message?</string>
+    <string name="report_form_switch_isMobileCall">Was this a text message?</string>
     <string name="report_form_switch_haveDoneBusiness">Have you done business with this company in the last 18 months or contacted them in the last 3 months?</string>
     <string name="report_form_switch_askedToStop">Have you asked this company to stop calling you?</string>
     <string name="report_form_comments_label">Please provide any additional information that you think might be helpful. You can enter up to 1000 characters. Do not include any personally identifiable information, such as your Social Security Number.</string>
     <string name="report_form_hint_subjectMatter">"What was the call about? "</string>
     <string name="report_form_hint_comments">Additional Comments</string>
     <string name="report_form_hint_caller_name">Caller Name</string>
+    <string name="contact_info_form_phone_number_hint">Receiving Phone Number Override</string>
 </resources>

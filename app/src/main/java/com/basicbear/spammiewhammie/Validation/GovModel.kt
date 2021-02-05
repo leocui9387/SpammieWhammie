@@ -1,4 +1,4 @@
-package com.basicbear.spammiewhammie.ui.report
+package com.basicbear.spammiewhammie.Validation
 
 import com.basicbear.spammiewhammie.ui.contact_info.PersonalInfo
 import com.basicbear.spammiewhammie.ui.main.PhoneCall

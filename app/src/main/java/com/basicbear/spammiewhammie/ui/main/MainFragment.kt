@@ -29,18 +29,9 @@ private const val PERMISSIONS_REQUEST_READ_CALL_LOG = 100
 
 private const val contactInfoTag = "ContactInfoParameter"
 
-class MainFragment : Fragment() {
-
-    companion object {
-        val fragmentTag = "MainFragment"
-        fun newInstance(contactInfo: PersonalInfo): MainFragment {
-            return MainFragment().apply {
-                arguments = Bundle().apply {
-                    putParcelable(contactInfoTag, contactInfo)
-                }
-            }
-        }
-    }
+class MainFragment(
+        private val contactInfo: PersonalInfo
+) : Fragment() {
 
     interface Callbacks{
         fun onCallSelected(phoneCall: PhoneCall)
@@ -54,7 +45,6 @@ class MainFragment : Fragment() {
     private lateinit var adView: AdView
     private lateinit var phoneCallRV: RecyclerView
     private lateinit var phoneCallLogs:List<PhoneCall>
-    private lateinit var contactInfo:PersonalInfo
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -64,9 +54,8 @@ class MainFragment : Fragment() {
             inflater: LayoutInflater, container: ViewGroup?,
             savedInstanceState: Bundle?
     ): View {
-        contactInfo = arguments?.getParcelable(contactInfoTag)?:PersonalInfo()
-
         val view = inflater.inflate(R.layout.main_fragment, container, false)
+
         phoneCallRV = view.findViewById(R.id.main_fragment_recycler_view)
         phoneCallRV.layoutManager = LinearLayoutManager(requireContext())
         phoneCallLogs  = getCalls(requireContext())

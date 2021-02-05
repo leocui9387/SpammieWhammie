@@ -11,6 +11,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.Switch
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.basicbear.spammiewhammie.R
 import com.basicbear.spammiewhammie.ui.main.MainFragment
@@ -24,24 +26,16 @@ private const val contactInfoTag = "ContactInfoParameter"
 private const val write_permission_code = 1
 private const val read_permission_code = 2
 
-class ContactInfoFragment:Fragment() {
+class ContactInfoFragment(
+        private val personalInfo: PersonalInfo
+
+):Fragment() {
     interface Callbacks{
         fun onContactInfoSaveSelected()
     }
 
-    companion object {
-        val fragmentTag = "ContactInfoFragment"
-
-        fun newInstance(contactInfo: PersonalInfo): ContactInfoFragment {
-            return ContactInfoFragment().apply {
-                arguments = Bundle().apply {
-                    putParcelable(contactInfoTag, contactInfo)
-                }
-            }
-        }
-    }
-
-    private lateinit var personalInfo: PersonalInfo
+    private lateinit var myPhoneNumber: TextInputEditText
+    private lateinit var myPhoneNumberOverride: Switch
     private lateinit var firstName: TextInputEditText
     private lateinit var lastName: TextInputEditText
     private lateinit var streetAddress1: TextInputEditText
@@ -67,7 +61,11 @@ class ContactInfoFragment:Fragment() {
 
         val view = inflater.inflate(R.layout.contact_info_fragment, container, false)
 
-        personalInfo = arguments?.getParcelable(contactInfoTag)?:PersonalInfo()
+        myPhoneNumber = view.findViewById(R.id.contact_info_form_phone_number_override)
+        myPhoneNumber.setText(personalInfo.MyPhoneNumber)
+
+        myPhoneNumberOverride = view.findViewById(R.id.contact_info_form_switch_phone_number_override)
+        myPhoneNumberOverride.isChecked = personalInfo.MyPhoneNumberOverride
 
         firstName = view.findViewById(R.id.contact_info_form_first_name)
         firstName.setText(personalInfo.FirstName)
@@ -93,6 +91,11 @@ class ContactInfoFragment:Fragment() {
         saveButton = view.findViewById(R.id.contact_info_save_button)
         saveButton.setOnClickListener {
 
+            personalInfo.MyPhoneNumberOverride = myPhoneNumberOverride.isChecked
+            if(personalInfo.MyPhoneNumberOverride){
+                personalInfo.MyPhoneNumber = myPhoneNumber.text.toString()
+            }
+
             personalInfo.FirstName = firstName.text.toString()
             personalInfo.LastName = lastName.text.toString()
             personalInfo.StreetAddress = streetAddress1.text.toString()
@@ -101,8 +104,17 @@ class ContactInfoFragment:Fragment() {
             personalInfo.State = stateInfo.text.toString()
             personalInfo.ZIP = zipInfo.text.toString()
 
-            callbacks?.onContactInfoSaveSelected()
-            requireActivity().finish()
+            val entryValidation = personalInfo.validate()
+
+            if(!entryValidation.isEmpty() ) {
+                callbacks?.onContactInfoSaveSelected()
+            }else{
+                Toast.makeText(requireContext(),entryValidation, Toast.LENGTH_LONG)
+            }
+
+
+
+
         }
 
 

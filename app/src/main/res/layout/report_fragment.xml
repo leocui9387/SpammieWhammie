@@ -10,48 +10,227 @@
     android:orientation="vertical"
     android:layout_margin="@dimen/report_margin"
     >
-    <Switch
-        android:paddingVertical="10dp"
-        android:id="@+id/report_form_switch_wasPrerecorded"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/report_form_switch_wasPrerecorded" />
 
-    <Switch
-        android:paddingVertical="10dp"
-        android:id="@+id/report_form_switch_isMobileCall"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/report_form_switch_isMobileCall" />
-    <Switch
-        android:paddingVertical="10dp"
-        android:id="@+id/report_form_switch_askedToStop"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/report_form_switch_askedToStop" />
-    <Switch
-        android:paddingVertical="10dp"
-        android:id="@+id/report_form_switch_haveDoneBusiness"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/report_form_switch_haveDoneBusiness" />
 
-        <Spinner
-            android:paddingVertical="10dp"
-            android:id="@+id/report_form_subjectMatter"
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/report_form_hint_caller_name" />
+
+    <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/report_form_hint_subjectMatter"/>
+            android:id="@+id/report_form_caller_name"
+            android:imeOptions="actionNext"
+            android:paddingBottom="10dp"
+            android:inputType="textImeMultiLine"
+            />
+    <View
+        android:id="@+id/report_form_divider_caller_name__wasPrerecorded"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="?android:attr/listDivider" />
+<androidx.constraintlayout.widget.ConstraintLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    >
+    <TextView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/report_form_wasPrerecorded_radio"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:text="@string/report_form_switch_wasPrerecorded"
+        >
 
-    <EditText
+    </TextView>
+    <RadioGroup
+        android:id="@+id/report_form_wasPrerecorded_radio"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        >
+
+        <RadioButton
+            android:id="@+id/report_form_wasPrerecorded_radio_yes"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Yes" />
+
+        <RadioButton
+            android:id="@+id/report_form_wasPrerecorded_radio_no"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="No" />
+    </RadioGroup>
+</androidx.constraintlayout.widget.ConstraintLayout>
+
+    <View
+        android:id="@+id/report_form_divider_wasPrerecorded__wasPrerecorded__isMobileCall"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="?android:attr/listDivider" />
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/report_form_caller_name"
-        android:imeOptions="actionNext"
-        android:inputType="textImeMultiLine"
-        android:hint="@string/report_form_hint_caller_name">
-    </EditText>
+        >
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/report_form_isMobileCall_radio"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:text="@string/report_form_switch_isMobileCall"
+            >
+
+        </TextView>
+        <RadioGroup
+            android:id="@+id/report_form_isMobileCall_radio"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            >
+
+            <RadioButton
+                android:id="@+id/report_form_isMobileCall_radio_yes"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Yes" />
+
+            <RadioButton
+                android:id="@+id/report_form_isMobileCall_radio_no"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="No" />
+        </RadioGroup>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+    <View
+        android:id="@+id/report_form_divider_isMobileCall__askedToStop"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="?android:attr/listDivider" />
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        >
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/report_form_askedToStop_radio"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:text="@string/report_form_switch_askedToStop"
+            >
+
+        </TextView>
+        <RadioGroup
+            android:id="@+id/report_form_askedToStop_radio"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            >
+
+            <RadioButton
+                android:id="@+id/report_form_askedToStop_radio_yes"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Yes" />
+
+            <RadioButton
+                android:id="@+id/report_form_askedToStop_radio_no"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="No" />
+        </RadioGroup>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+    <View
+        android:id="@+id/report_form_divider_askedToStop__haveDoneBusiness"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="?android:attr/listDivider" />
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        >
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/report_form_haveDoneBusiness_radio"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:text="@string/report_form_switch_haveDoneBusiness"
+            >
+
+        </TextView>
+        <RadioGroup
+            android:id="@+id/report_form_haveDoneBusiness_radio"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            >
+
+            <RadioButton
+                android:id="@+id/report_form_haveDoneBusiness_radio_yes"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Yes" />
+
+            <RadioButton
+                android:id="@+id/report_form_haveDoneBusiness_radio_no"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="No" />
+        </RadioGroup>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+    <View
+        android:id="@+id/report_form_divider_haveDoneBusiness__subjectMatter"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="?android:attr/listDivider" />
+
+    <TextView
+        android:id="@+id/report_form_spinner_prompt_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/report_form_hint_subjectMatter" />
+
+    <Spinner
+        android:paddingVertical="10dp"
+        android:id="@+id/report_form_subjectMatter"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:outlineAmbientShadowColor="@color/browser_actions_bg_grey"
+        />
+
+
+    <View
+        android:id="@+id/report_form_divider_subjectMatter__comments"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="?android:attr/listDivider" />
+
+
+    <TextView
+        android:id="@+id/report_form_comments_prompt_text"
+        android:paddingTop="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/report_form_comments_label" />
     <EditText
+        android:paddingVertical="10dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/report_form_comments"
@@ -59,7 +238,11 @@
         android:inputType="textImeMultiLine"
         android:hint="@string/report_form_hint_comments">
     </EditText>
-
+    <View
+        android:id="@+id/report_form_divider_comments__submit_button"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="?android:attr/listDivider" />
     <Button
         android:id="@+id/report_submit_button"
         android:layout_width="match_parent"
@@ -78,3 +261,6 @@
         app:layout_constraintBottom_toBottomOf="parent" />
 
 </LinearLayout>
+
+
+
