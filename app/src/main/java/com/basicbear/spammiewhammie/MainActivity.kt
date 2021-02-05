@@ -30,6 +30,7 @@ class MainActivity : AppCompatActivity(),
     private lateinit var mainFragment: MainFragment
     private lateinit var contactInfoFragment: ContactInfoFragment
     private lateinit var contactInfo: PersonalInfo
+    private lateinit var reportFragment: ReportFragment
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -64,7 +65,15 @@ class MainActivity : AppCompatActivity(),
 
         if(mainFragment.isVisible())  {
             super.onBackPressed()
-        }else {
+        }
+        else if(reportFragment.isVisible){
+            if(reportFragment.WebViewCanGoBack()){
+                reportFragment.WebViewGoBack()
+            }else {
+                super.onBackPressed()
+            }
+        }
+        else {
             supportFragmentManager.beginTransaction()
                     .replace(R.id.main_fragment_container, mainFragment)
                     .commit()
@@ -72,7 +81,7 @@ class MainActivity : AppCompatActivity(),
     }
 
     override fun onCallSelected(phoneCall: PhoneCall) {
-        val reportFragment = ReportFragment(contactInfo,phoneCall, areaCodes,dncApi)
+        reportFragment = ReportFragment(contactInfo,phoneCall)
 
         supportFragmentManager.beginTransaction()
                 .replace(R.id.main_fragment_container, reportFragment)
@@ -97,12 +106,6 @@ class MainActivity : AppCompatActivity(),
                 .commit()
     }
 
-    override fun closeSoftKeyboard(view: View) {
-        if(view != null){
-            val imm = getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
-            imm.hideSoftInputFromWindow(view.windowToken,0)
-        }
-    }
 
     override fun onComplaintSubmission() {
 

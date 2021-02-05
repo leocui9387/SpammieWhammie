@@ -1,157 +1,106 @@
 package com.basicbear.spammiewhammie.ui.report
 
-import android.content.Context
+import android.graphics.Bitmap
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.WindowManager
-import android.widget.*
+import android.webkit.ValueCallback
+import android.webkit.WebResourceRequest
+import android.webkit.WebView
+import android.webkit.WebViewClient
 import androidx.fragment.app.Fragment
 import com.basicbear.spammiewhammie.R
-import com.basicbear.spammiewhammie.Validation.AreaCodes
-import com.basicbear.spammiewhammie.Validation.GovModel
-import com.basicbear.spammiewhammie.Validation.DoNotCallApi
-import com.basicbear.spammiewhammie.Validation.Validation
 import com.basicbear.spammiewhammie.ui.contact_info.PersonalInfo
 import com.basicbear.spammiewhammie.ui.main.PhoneCall
 
 private const val TAG = "ReportFragment"
-private const val contactInfoParameterTag = "ReportFragment ContactInfo Parameter"
 
 class ReportFragment(
         private val contactInfo:PersonalInfo,
         private val phoneCall: PhoneCall,
-        private val areaCodes: AreaCodes,
-        private val dncApi: DoNotCallApi
         ):Fragment() {
 
     interface Callbacks{
-        fun closeSoftKeyboard(view:View)
         fun onComplaintSubmission()
     }
 
-    private var callbacks:Callbacks? = null
-    private lateinit var validation: Validation
 
-    private lateinit var submitModel: GovModel
+    private lateinit var reportWebView: WebView
 
-    private lateinit var wasPrerecorded:RadioGroup
-    private lateinit var isMobileCall:RadioGroup
-    private lateinit var askedToStop:RadioGroup
-    private lateinit var haveDoneBusiness:RadioGroup
-    private lateinit var subjectMatter:Spinner
-    private lateinit var callerName:EditText
-    private lateinit var comments:EditText
-    private lateinit var submitButton:Button
-
-    private var viewCreated:Boolean = false
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        callbacks = context as Callbacks?
-    }
+    private lateinit var javascript_step1:String
+    private lateinit var javascript_step2:String
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
-        activity?.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
-        super.onCreate(savedInstanceState)
 
+        javascript_step1 =
+                "console.log(\"s Step1 \" + dnc_app.config.submit_complaint_url); " + //https://www2.donotcall.gov/save-complaint
+                "window.ClearData=function(){return false;};" +
+                "document.getElementById(\"PhoneTextBox\").value = '${contactInfo.MyPhoneNumber}'; " +
+                "$(\"#DateOfCallTextBox\").val(\"${phoneCall.MediumDate()}\"); "+
+                "$(\"#TimeOfCallDropDownList\").val(${phoneCall.DateHour()}); "+
+                "$(\"#ddlMinutes\").val(${phoneCall.DateMinute()}); " +
+                "$(\"#PhoneCallRadioButton\").prop('checked',true); ";
+
+                /*
+                "$(\"#PhoneTextBox\").val(\"${personalInfo.MyPhoneNumber}\"); " +
+                "$(\"#DateOfCallTextBox\").val(\"${phoneCall.MediumDate()}\"); "+
+                "$(\"#TimeOfCallDropDownList\").val(${phoneCall.DateHour()}); "+
+                "$(\"#ddlMinutes\").val(${phoneCall.DateMinute()}); " +
+                "$(\"#PhoneCallRadioButton\").prop('checked',true); "
+                 */
+
+        javascript_step2 =" console.log(\"js Step2\"); " +
+                "$(\"#CallerPhoneNumberTextBox\").val(\"${phoneCall.number}\"); " +
+                "$(\"#FirstNameTextBox\").val(\"${contactInfo.FirstName}\"); "+
+                "$(\"#LastNameTextBox\").val(${contactInfo.LastName}); "+
+                "$(\"#StreetAddressTextBox\").val(${contactInfo.StreetAddress}); "+
+                "$(\"#CityTextBox\").val(${contactInfo.City}); "+
+                "$(\"#StateDropDownList\").val(${contactInfo.State}); "+
+                "$(\"#ZipCodeTextBox\").val(${contactInfo.ZIP}); "+
+
+        super.onCreate(savedInstanceState)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
+        Log.d(TAG, "oncreateView triggered")
         val view = inflater.inflate(R.layout.report_fragment, container, false)
 
-        wasPrerecorded = view.findViewById(R.id.report_form_wasPrerecorded_radio)
-        isMobileCall= view.findViewById(R.id.report_form_isMobileCall_radio)
-        askedToStop= view.findViewById(R.id.report_form_askedToStop_radio )
-        haveDoneBusiness= view.findViewById(R.id.report_form_haveDoneBusiness_radio)
+        reportWebView = view.findViewById(R.id.report_web_view)
+        reportWebView.settings.javaScriptEnabled = true
+        reportWebView.webViewClient = WebViewClient()
+        WebView.setWebContentsDebuggingEnabled(true)
 
-        subjectMatter= view.findViewById(R.id.report_form_subjectMatter)
-        ArrayAdapter.createFromResource(
-                requireContext(),
-                R.array.report_form_subject_matter_spinner,
-                android.R.layout.simple_spinner_item
-        ).also { arrayAdapter ->
-            arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-            subjectMatter.adapter=arrayAdapter
-        }
+        reportWebView.loadUrl(getString(R.string.federal_report_url) + getString(R.string.federal_report_url_step1_postfix))
 
-        callerName = view.findViewById(R.id.report_form_caller_name)
-        callerName.setOnFocusChangeListener { v, hasFocus ->
-            if(!hasFocus) callbacks?.closeSoftKeyboard(view)
-        }
 
-        comments= view.findViewById(R.id.report_form_comments)
-        comments.setOnFocusChangeListener { v, hasFocus ->
-            if(!hasFocus) callbacks?.closeSoftKeyboard(view)
-        }
 
-        submitButton = view.findViewById(R.id.report_submit_button)
-        submitButton.setOnClickListener{
-
-            submitModel = loadFormData()
-            validation = Validation(requireContext(),submitModel,dncApi,areaCodes)
-            Log.d(TAG,"validation text: "+ validation.validate())
-            Toast.makeText(context,"Validation Text: " , Toast.LENGTH_LONG).show()
-            callbacks?.onComplaintSubmission()
-        }
-        viewCreated = true
         return view
     }
 
+    fun autoFillData(view: WebView?, url: String?){
+        var javascript =""
 
-    private fun loadFormData(): GovModel {
-        var newModel = GovModel(
-                PersonalInfo.numbersOnly(contactInfo.MyPhoneNumber),
-                phoneCall.MediumDate(),
-                phoneCall.DateHour().toString(),
-                phoneCall.DateMinute().toString(),
-                wasPrerecorded_GovModel(),
-                isMobileCall_GovModel(),
-                subjectMatter.selectedItem.toString(),
-                PersonalInfo.numbersOnly(phoneCall.number),
-                callerName.text.toString(),
-                haveDoneBusiness_GovModel(),
-                askedToStop_GovModel(),
-                contactInfo.FirstName,
-                contactInfo.LastName,
-                contactInfo.StreetAddress,
-                contactInfo.StreetAddress2,
-                contactInfo.City,
-                contactInfo.State,
-                contactInfo.ZIP,
-                comments.text.toString(),
-                "en-US",
-                "Y"
-            )
-        return newModel
+        if(url.equals(getString(R.string.federal_report_url) + getString(R.string.federal_report_url_step1_postfix))){
+            javascript = javascript_step1
+        }else if(url.equals(getString(R.string.federal_report_url) + getString(R.string.federal_report_url_step2_postfix))){
+            javascript = javascript_step2
+        }else if(url.equals(getString(R.string.federal_report_url) + getString(R.string.federal_report_url_step3_postfix))){
+            //return to main activity
+        }
+
     }
 
-    private fun wasPrerecorded_GovModel():String{
-        return  if(wasPrerecorded.checkedRadioButtonId == R.id.report_form_wasPrerecorded_radio_yes) "Y"
-                else if(wasPrerecorded.checkedRadioButtonId == R.id.report_form_wasPrerecorded_radio_no) "N"
-                else ""
+    fun WebViewCanGoBack():Boolean{
+        return reportWebView.canGoBack()
     }
 
-    private fun isMobileCall_GovModel():String{
-        return  if(isMobileCall.checkedRadioButtonId == R.id.report_form_isMobileCall_radio_yes) "Y"
-                else if(isMobileCall.checkedRadioButtonId == R.id.report_form_isMobileCall_radio_no) "N"
-                else ""
-    }
-
-    private fun haveDoneBusiness_GovModel():String{
-        return  if(haveDoneBusiness.checkedRadioButtonId == R.id.report_form_haveDoneBusiness_radio_yes) "Y"
-                else if(haveDoneBusiness.checkedRadioButtonId == R.id.report_form_haveDoneBusiness_radio_no) "N"
-                else ""
-    }
-
-    private fun askedToStop_GovModel():String{
-        return  if(askedToStop.checkedRadioButtonId == R.id.report_form_askedToStop_radio_yes) "Y"
-                else if(askedToStop.checkedRadioButtonId == R.id.report_form_askedToStop_radio_yes) "N"
-                else ""
+    fun WebViewGoBack(){
+        reportWebView.goBack()
     }
 
 }
