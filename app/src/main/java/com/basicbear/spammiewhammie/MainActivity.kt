@@ -105,8 +105,6 @@ class MainActivity : AppCompatActivity(),
 
     override fun onComplaintSubmission() {
 
-
-
         supportFragmentManager.beginTransaction()
                 .replace(R.id.main_fragment_container, mainFragment)
                 .commit()
