@@ -5,7 +5,7 @@
     <string name="default_call_type">null type</string>
     <string name="default_call_duration">-1 seconds</string>
     <string name="default_call_via_number">malicious number</string>
-    <string name="federal_report_url">https://www.donotcall.gov/</string>
+    <string name="federal_report_url">https://www.donotcall.gov</string>
     <string name="federal_report_url_step1_postfix">/report.html#step1</string>
     <string name="federal_report_url_step2_postfix">/report.html#step2</string>
     <string name="federal_report_url_step3_postfix">/report.html#step3</string>

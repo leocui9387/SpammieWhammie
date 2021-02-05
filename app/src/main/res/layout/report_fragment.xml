@@ -1,19 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-
-
     <androidx.constraintlayout.widget.ConstraintLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
 
         xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+    <Button
+        android:id="@+id/report_auto_load_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Load Info"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <WebView
         android:id="@+id/report_web_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toTopOf="@id/report_adView"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/report_auto_load_button"
         app:layout_constraintVertical_bias="0"
         >
     </WebView>
@@ -28,4 +33,5 @@
         ads:adUnitId="ca-app-pub-2984887454634255/2175184119"
         app:layout_constraintBottom_toBottomOf="parent"
          />
+
     </androidx.constraintlayout.widget.ConstraintLayout>

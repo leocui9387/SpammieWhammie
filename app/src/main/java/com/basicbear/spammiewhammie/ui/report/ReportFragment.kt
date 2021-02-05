@@ -11,6 +11,7 @@ import android.webkit.ValueCallback
 import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import android.widget.Button
 import androidx.fragment.app.Fragment
 import com.basicbear.spammiewhammie.R
 import com.basicbear.spammiewhammie.ui.contact_info.PersonalInfo
@@ -27,14 +28,13 @@ class ReportFragment(
         fun onComplaintSubmission()
     }
 
-
     private lateinit var reportWebView: WebView
+    private lateinit var loadInfoButton: Button
 
     private lateinit var javascript_step1:String
     private lateinit var javascript_step2:String
 
     override fun onCreate(savedInstanceState: Bundle?) {
-
 
         javascript_step1 =
                 "console.log(\"s Step1 \" + dnc_app.config.submit_complaint_url); " + //https://www2.donotcall.gov/save-complaint
@@ -60,7 +60,7 @@ class ReportFragment(
                 "$(\"#StreetAddressTextBox\").val(${contactInfo.StreetAddress}); "+
                 "$(\"#CityTextBox\").val(${contactInfo.City}); "+
                 "$(\"#StateDropDownList\").val(${contactInfo.State}); "+
-                "$(\"#ZipCodeTextBox\").val(${contactInfo.ZIP}); "+
+                "$(\"#ZipCodeTextBox\").val(${contactInfo.ZIP}); "
 
         super.onCreate(savedInstanceState)
     }
@@ -70,10 +70,39 @@ class ReportFragment(
         Log.d(TAG, "oncreateView triggered")
         val view = inflater.inflate(R.layout.report_fragment, container, false)
 
+        loadInfoButton = view.findViewById(R.id.report_auto_load_button)
+        loadInfoButton.setOnClickListener {
+            val current_url:String = reportWebView.url?:""
+            val js=
+                    if(current_url.contains("step1",true)){
+                                "document.getElementById(\"PhoneTextBox\").value = '${contactInfo.MyPhoneNumber}'; " +
+                                "$(\"#DateOfCallTextBox\").val(\"${phoneCall.MediumDate()}\"); "+
+                                "$(\"#TimeOfCallDropDownList\").val(${phoneCall.DateHour()}); "+
+                                "$(\"#ddlMinutes\").val(${phoneCall.DateMinute()}); " +
+                                "$(\"#PhoneCallRadioButton\").prop('checked',true); ";
+
+
+                    }
+                    else{
+
+                                "$(\"#CallerPhoneNumberTextBox\").val(\"${phoneCall.number}\"); " +
+                                "$(\"#FirstNameTextBox\").val(\"${contactInfo.FirstName}\"); "+
+                                "$(\"#LastNameTextBox\").val(\"${contactInfo.LastName}\"); "+
+                                "$(\"#StreetAddressTextBox\").val(\"${contactInfo.StreetAddress}\"); "+
+                                "$(\"#CityTextBox\").val(\"${contactInfo.City}\"); "+
+                                "$(\"#StateDropDownList\").val(\"${contactInfo.State}\"); "+
+                                "$(\"#ZipCodeTextBox\").val(\"${contactInfo.ZIP}\"); "
+                    }
+
+            Log.d(TAG,"javascript run: " + js)
+            reportWebView.evaluateJavascript(js,null)
+
+        }
+
         reportWebView = view.findViewById(R.id.report_web_view)
         reportWebView.settings.javaScriptEnabled = true
         reportWebView.webViewClient = WebViewClient()
-        WebView.setWebContentsDebuggingEnabled(true)
+        //WebView.setWebContentsDebuggingEnabled(true)
 
         reportWebView.loadUrl(getString(R.string.federal_report_url) + getString(R.string.federal_report_url_step1_postfix))
 

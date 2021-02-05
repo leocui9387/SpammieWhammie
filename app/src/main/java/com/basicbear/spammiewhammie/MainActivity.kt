@@ -66,12 +66,8 @@ class MainActivity : AppCompatActivity(),
         if(mainFragment.isVisible())  {
             super.onBackPressed()
         }
-        else if(reportFragment.isVisible){
-            if(reportFragment.WebViewCanGoBack()){
-                reportFragment.WebViewGoBack()
-            }else {
-                super.onBackPressed()
-            }
+        else if(reportFragment.isVisible && reportFragment.WebViewCanGoBack()){
+            reportFragment.WebViewGoBack()
         }
         else {
             supportFragmentManager.beginTransaction()
