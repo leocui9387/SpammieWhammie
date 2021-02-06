@@ -1,19 +1,17 @@
 package com.basicbear.spammiewhammie.ui.report
 
-import android.graphics.Bitmap
-import android.os.Build
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.webkit.ValueCallback
-import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.Button
 import androidx.fragment.app.Fragment
 import com.basicbear.spammiewhammie.R
+import com.basicbear.spammiewhammie.ui.contact_info.ContactInfoFragment
 import com.basicbear.spammiewhammie.ui.contact_info.PersonalInfo
 import com.basicbear.spammiewhammie.ui.main.PhoneCall
 
@@ -25,16 +23,29 @@ class ReportFragment(
         ):Fragment() {
 
     interface Callbacks{
-        fun onComplaintSubmission()
+        fun ReportFragment_onDone()
     }
 
     private lateinit var reportWebView: WebView
     private lateinit var loadInfoButton: Button
+    private lateinit var doneButton: Button
+
+    private var callbacks: Callbacks? = null
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        callbacks = context as Callbacks?
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
         Log.d(TAG, "oncreateView triggered")
         val view = inflater.inflate(R.layout.report_fragment, container, false)
+        doneButton = view.findViewById(R.id.report_done_button)
+        doneButton.setOnClickListener {
+            callbacks?.ReportFragment_onDone()
+        }
+
 
         loadInfoButton = view.findViewById(R.id.report_auto_load_button)
         loadInfoButton.setOnClickListener {

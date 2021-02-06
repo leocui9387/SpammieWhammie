@@ -66,8 +66,11 @@ class MainActivity : AppCompatActivity(),
         if(mainFragment.isVisible())  {
             super.onBackPressed()
         }
-        else if(reportFragment.isVisible && reportFragment.WebViewCanGoBack()){
-            reportFragment.WebViewGoBack()
+        else if(
+                this::reportFragment.isInitialized &&
+                (reportFragment.isVisible && reportFragment.WebViewCanGoBack())
+        ){
+                reportFragment.WebViewGoBack()
         }
         else {
             supportFragmentManager.beginTransaction()
@@ -103,10 +106,10 @@ class MainActivity : AppCompatActivity(),
     }
 
 
-    override fun onComplaintSubmission() {
-
+    override fun ReportFragment_onDone() {
         supportFragmentManager.beginTransaction()
                 .replace(R.id.main_fragment_container, mainFragment)
                 .commit()
     }
+
 }
