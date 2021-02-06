@@ -83,8 +83,6 @@ class MainFragment(
             )
         }
 
-
-
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -162,6 +160,7 @@ class MainFragment(
         private lateinit var dateTextView : TextView
         private lateinit var durationTextView : TextView
         private lateinit var typeTextView : TextView
+        private lateinit var viaNumberTextView : TextView
         private lateinit var detailFrame : FrameLayout
         private lateinit var summaryFrame : FrameLayout
         private lateinit var reportButton: FloatingActionButton
@@ -188,7 +187,7 @@ class MainFragment(
             numberTextView = itemView.findViewById(R.id.list_item_phone_call_number)
             durationTextView = itemView.findViewById(R.id.list_item_phone_call_duration)
             typeTextView = itemView.findViewById(R.id.list_item_phone_call_type)
-
+            viaNumberTextView = itemView.findViewById(R.id.list_item_phone_call_via_number)
             detailFrame = itemView.findViewById(R.id.list_item_phone_call_details)
             summaryFrame = itemView.findViewById(R.id.list_item_phone_call_summary)
 
@@ -208,8 +207,9 @@ class MainFragment(
                     )
             )
             numberTextView.setText(phoneCall.FormatedNumber())
-            durationTextView.setText(phoneCall.duration.toString())
+            durationTextView.setText("Duration: " + phoneCall.duration.toString() + " s")
             typeTextView.setText(phoneCall.TypeString())
+            viaNumberTextView.setText("Via No.: " + phoneCall.via_number)
         }
     }
 

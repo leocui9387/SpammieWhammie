@@ -15,6 +15,11 @@
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent"
         >
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="?android:attr/listDivider" />
+
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -23,7 +28,7 @@
                 android:id="@+id/list_item_phone_call_number"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/default_phone_number"
+                android:text="@string/recycler_view_error"
                 android:textSize="20dp"
 
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -34,7 +39,7 @@
                 android:id="@+id/list_item_phone_call_date"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/default_call_date"
+                android:text="@string/recycler_view_error"
                 android:textSize="20dp"
 
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -48,6 +53,7 @@
         android:id="@+id/list_item_phone_call_details"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@color/browser_actions_bg_grey"
         app:layout_constraintTop_toBottomOf="@id/list_item_phone_call_summary"
         >
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -58,7 +64,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
 
-                android:text="@string/default_call_type"
+                android:text="@string/recycler_view_error"
 
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
@@ -66,7 +72,7 @@
 
             <TextView
                 android:id="@+id/list_item_phone_call_duration"
-                android:text="@string/default_call_duration"
+                android:text="@string/recycler_view_error"
 
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -77,7 +83,7 @@
 
             <TextView
                 android:id="@+id/list_item_phone_call_via_number"
-                android:text="@string/default_call_via_number"
+                android:text="@string/recycler_view_error"
 
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -101,7 +107,10 @@
                 />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
-
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="?android:attr/listDivider" />
     </FrameLayout>
 
 
