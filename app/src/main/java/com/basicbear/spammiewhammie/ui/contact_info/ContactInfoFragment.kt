@@ -94,6 +94,8 @@ class ContactInfoFragment(
             personalInfo.MyPhoneNumberOverride = myPhoneNumberOverride.isChecked
             if(personalInfo.MyPhoneNumberOverride){
                 personalInfo.MyPhoneNumber = myPhoneNumber.text.toString()
+            }else{
+                personalInfo.GetThisPhoneNumber(requireActivity())
             }
 
             personalInfo.FirstName = firstName.text.toString()
@@ -111,9 +113,6 @@ class ContactInfoFragment(
             }else{
                 Toast.makeText(requireContext(),entryValidation, Toast.LENGTH_LONG)
             }
-
-
-
 
         }
 

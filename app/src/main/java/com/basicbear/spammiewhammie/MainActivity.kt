@@ -38,6 +38,9 @@ class MainActivity : AppCompatActivity(),
         contactInfo = PersonalInfo()
         contactInfo.getContactInfo(this)
 
+
+
+
         val retrofit = Retrofit.Builder()
             .baseUrl(getString(R.string.federal_report_url))
             .addConverterFactory(ScalarsConverterFactory.create())
@@ -97,7 +100,6 @@ class MainActivity : AppCompatActivity(),
     }
 
     override fun onContactInfoSaveSelected() {
-        contactInfo.GetThisPhoneNumber(this)
         contactInfo.saveToFile(this)
 
         supportFragmentManager.beginTransaction()

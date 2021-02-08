@@ -10,6 +10,7 @@ import android.util.Log
 import android.view.*
 import android.widget.FrameLayout
 import android.widget.TextView
+import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -66,6 +67,11 @@ class MainFragment(
         adView = view.findViewById(R.id.main_adView)
         val adRequest:AdRequest = AdRequest.Builder().build()
         adView.loadAd(adRequest)
+
+        if(contactInfo.isEmpty()) {
+            callbacks?.onMenuContactInfoSelected()
+            Toast.makeText(context,getString(R.string.contact_info_form_requirement_toast),Toast.LENGTH_LONG).show()
+        }
 
         return view
     }

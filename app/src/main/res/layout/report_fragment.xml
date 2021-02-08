@@ -5,16 +5,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-    <WebView
-        android:id="@+id/report_web_view"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/report_adView"
-        app:layout_constraintVertical_bias="0"
-        >
-    </WebView>
-
     <com.google.android.gms.ads.AdView
         xmlns:ads="http://schemas.android.com/apk/res-auto"
         android:id="@+id/report_adView"
@@ -23,8 +13,22 @@
         android:layout_alignParentBottom="true"
         ads:adSize="BANNER"
         ads:adUnitId="ca-app-pub-2984887454634255/2175184119"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toTopOf="@id/report_command_layout"
-         />
+        app:layout_constraintVertical_bias="0"
+        />
+
+
+    <WebView
+        android:id="@+id/report_web_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/report_adView"
+        app:layout_constraintBottom_toTopOf="@id/report_command_layout"
+        >
+    </WebView>
+
+
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"

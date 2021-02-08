@@ -36,7 +36,7 @@ data class PersonalInfo (
         }
     }
 
-    fun getContactInfo(activity: Activity){
+    fun getContactInfo(activity: Activity):Boolean{
         var infoBuff:PersonalInfo
         var dataJSON: String
         try {
@@ -44,9 +44,10 @@ data class PersonalInfo (
             val r = BufferedReader(InputStreamReader(fis))
             dataJSON = r.readText()
             r.close()
+
         } catch (e: IOException) {
             Log.i(TAG, "file read failed")
-            return
+            return false
         }
 
         var gson: Gson = Gson()
@@ -62,6 +63,7 @@ data class PersonalInfo (
         this.State =  infoBuff.State
         this.ZIP =  infoBuff.ZIP
 
+        return true
     }
 
     fun saveToFile(activity: Activity){
@@ -83,7 +85,6 @@ data class PersonalInfo (
 
     fun GetThisPhoneNumber(activity: Activity){
         if(MyPhoneNumberOverride) return
-        if(!MyPhoneNumber.isEmpty()) return
 
         if(activity.checkSelfPermission(Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
             activity.requestPermissions(
@@ -107,5 +108,9 @@ data class PersonalInfo (
         if( stateCodes.contains(State) ) return "Your state code is invalid."
 
         return ""
+    }
+
+    fun isEmpty():Boolean{
+        return MyPhoneNumber.isEmpty() || FirstName.isEmpty() || LastName.isEmpty()|| StreetAddress.isEmpty()|| City.isEmpty()|| State.isEmpty() || ZIP.isEmpty()
     }
 }
