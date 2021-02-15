@@ -1,8 +1,10 @@
 <resources>
     <string name="app_name">Do Not Call Assistant</string>
-    <string name="federal_report_url">https://www.donotcall.gov</string>
-    <string name="federal_report_url_step1_postfix">/report.html#step1</string>
-    <string name="main_menu_item_contact_info">Contact Info</string>
+    <string name="federal_report_url">www.donotcall.gov</string>
+    <string name="federal_report_url_postfix">report.html</string>
+    <string name="federal_registration_url_postfix">register.html</string>
+    <string name="federal_verify_registration_url_postfix">verify.html</string>
+    <string name="federal_url_step1">step1</string>
     <string name="contact_info_form_first_name_hint">First Name</string>
     <string name="contact_info_form_last_name_hint">Last Name</string>
     <string name="contact_info_form_street_address_1_hint">Street Address 1</string>
@@ -12,6 +14,15 @@
     <string name="contact_info_form_zip_code_hint">Zip Code</string>
     <string name="contact_info_form_button_text">Save</string>
     <string name="contact_info_form_phone_number_hint">Receiving Phone Number Override</string>
-    <string name="recycler_view_error">Error</string>
     <string name="contact_info_form_requirement_toast">Please fill out required contact information.</string>
+    <string name="main_button_contact_info">Contact Information</string>
+    <string name="main_button_initial_registration">Initial Registration</string>
+    <string name="main_button_report_call">Report Call</string>
+    <string name="report_form_call_window_text">Open Call App</string>
+    <string name="report_form_load_info_text">Load Info</string>
+    <string name="report_form_save_return_text">Save + Return</string>
+    <string name="report_form_done_text">Return</string>
+    <string name="main_button_verify_registration">Verify Registration</string>
+    <string name="main_tool_bar_title">Do Not Call Assistant</string>
+    <string name="contact_info_form_email_hint">Email</string>
 </resources>

@@ -8,7 +8,6 @@
     android:layout_height="match_parent"
     android:gravity="top"
     android:orientation="vertical"
-    android:paddingLeft="@dimen/contact_info_margin"
     >
     <com.google.android.gms.ads.AdView
         xmlns:ads="http://schemas.android.com/apk/res-auto"
@@ -47,8 +46,19 @@
 
     </LinearLayout>
 
-
-
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/contact_info_form_email"
+            android:background="@android:color/transparent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:singleLine="true"
+            android:hint="@string/contact_info_form_email_hint"
+            android:text="@{contactInfo.MyEmail}"
+            />
+    </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"

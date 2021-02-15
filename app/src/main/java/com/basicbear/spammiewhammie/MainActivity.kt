@@ -1,31 +1,23 @@
 package com.basicbear.spammiewhammie
 
-import android.app.Activity
+import android.accessibilityservice.AccessibilityService
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
-import android.view.View
-import android.view.inputmethod.InputMethodManager
+import android.telecom.TelecomManager
+import android.view.accessibility.AccessibilityEvent
 import androidx.appcompat.app.AppCompatActivity
-import com.basicbear.spammiewhammie.Validation.AreaCodes
-import com.basicbear.spammiewhammie.Validation.DoNotCallApi
+
 import com.basicbear.spammiewhammie.ui.contact_info.ContactInfoFragment
 import com.basicbear.spammiewhammie.ui.contact_info.PersonalInfo
 import com.basicbear.spammiewhammie.ui.main.MainFragment
-import com.basicbear.spammiewhammie.ui.main.PhoneCall
-import com.basicbear.spammiewhammie.ui.report.ReportFragment
-import retrofit2.Retrofit
-import retrofit2.converter.scalars.ScalarsConverterFactory
+import com.basicbear.spammiewhammie.ui.gov.ReportFragment
+
 
 private val TAG = "MainActivity"
 
-class MainActivity : AppCompatActivity(),
-        MainFragment.Callbacks,
-        ContactInfoFragment.Callbacks,
-        ReportFragment.Callbacks
+class MainActivity : AppCompatActivity(), NavigationCallbacks
 {
-
-    private lateinit var dncApi: DoNotCallApi
-    private lateinit var areaCodes: AreaCodes
-
 
     private lateinit var mainFragment: MainFragment
     private lateinit var contactInfoFragment: ContactInfoFragment
@@ -37,30 +29,14 @@ class MainActivity : AppCompatActivity(),
 
         contactInfo = PersonalInfo()
         contactInfo.getContactInfo(this)
-
-
-
-
-        val retrofit = Retrofit.Builder()
-            .baseUrl(getString(R.string.federal_report_url))
-            .addConverterFactory(ScalarsConverterFactory.create())
-            .build()
-
-        dncApi = retrofit.create(DoNotCallApi::class.java)
-        areaCodes = AreaCodes(dncApi)
-
-
-        mainFragment = MainFragment(contactInfo)
+        mainFragment = MainFragment.newInstance(contactInfo)
 
         setContentView(R.layout.activity_main)
 
         if (savedInstanceState == null) {
-            supportFragmentManager.beginTransaction()
-                    .add(R.id.main_fragment_container, mainFragment)
-                    .commitNow()
+            goto_main()
             //Log.d(TAG, "support frag man back stack count after initial onCreate: " + supportFragmentManager.backStackEntryCount)
         }
-
 
     }
 
@@ -76,41 +52,49 @@ class MainActivity : AppCompatActivity(),
                 reportFragment.WebViewGoBack()
         }
         else {
-            supportFragmentManager.beginTransaction()
-                    .replace(R.id.main_fragment_container, mainFragment)
-                    .commit()
+            goto_main()
         }
     }
 
-    override fun onCallSelected(phoneCall: PhoneCall) {
-        reportFragment = ReportFragment(contactInfo,phoneCall)
+    override fun goto_registration() {
+        goto_gov_site(getString(R.string.federal_registration_url_postfix),false)
+    }
+
+    override fun goto_report() {
+        goto_gov_site(getString(R.string.federal_report_url_postfix),true)
+    }
+
+    override fun goto_verify_registration() {
+        goto_gov_site(getString(R.string.federal_verify_registration_url_postfix),false)
+    }
+
+    override fun goto_contactInfo() {
+        contactInfoFragment = ContactInfoFragment.newInstance(contactInfo)
+
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.main_fragment_container, contactInfoFragment)
+            .commit()
+    }
+
+    override fun goto_main() {
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.main_fragment_container, mainFragment)
+            .commit()
+    }
+
+    private fun goto_gov_site(path_feature:String, open_window_button_visibility:Boolean){
+        val builder = Uri.Builder()
+
+        builder.scheme("https")
+                .authority(getString(R.string.federal_report_url))
+                .appendPath(path_feature)
+                .fragment(getString(R.string.federal_url_step1))
+
+        val uri = builder.build()
+        reportFragment = ReportFragment.newInstance(contactInfo,uri.toString(),open_window_button_visibility)
 
         supportFragmentManager.beginTransaction()
                 .replace(R.id.main_fragment_container, reportFragment)
-                .commit()
-
-    }
-
-    override fun onMenuContactInfoSelected() {
-        contactInfoFragment = ContactInfoFragment(contactInfo)
-
-        supportFragmentManager.beginTransaction()
-                .replace(R.id.main_fragment_container, contactInfoFragment)
-                .commit()
-    }
-
-    override fun onContactInfoSaveSelected() {
-        contactInfo.saveToFile(this)
-
-        supportFragmentManager.beginTransaction()
-                .replace(R.id.main_fragment_container, mainFragment)
-                .commit()
-    }
-
-
-    override fun ReportFragment_onDone() {
-        supportFragmentManager.beginTransaction()
-                .replace(R.id.main_fragment_container, mainFragment)
                 .commit()
     }
 

@@ -1,35 +1,59 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/main_fragment_recycler_view"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_constraintVertical_bias="0"
-            app:layout_constraintBottom_toTopOf="@id/main_adView"
-            app:layout_constraintTop_toTopOf="parent">
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/main_toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="?attr/colorPrimary"
+                android:minHeight="?attr/actionBarSize"
+                android:theme="?attr/actionBarTheme"
+                app:title="@string/main_tool_bar_title"
+                app:titleTextColor="@color/yellow"
+                />
+
+            <com.google.android.gms.ads.AdView
+                xmlns:ads="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/main_adView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                ads:adSize="BANNER"
+                ads:adUnitId="ca-app-pub-2984887454634255/2175184119"
+                app:layout_constraintBottom_toBottomOf="parent"
+                />
 
 
-        </androidx.recyclerview.widget.RecyclerView>
 
-        <com.google.android.gms.ads.AdView
-            xmlns:ads="http://schemas.android.com/apk/res-auto"
 
-            android:id="@+id/main_adView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            ads:adSize="BANNER"
-            ads:adUnitId="ca-app-pub-2984887454634255/2175184119"
-            app:layout_constraintBottom_toBottomOf="parent"
-            />
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            <Button
+                android:id="@+id/main_button_contact_info"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/main_button_contact_info" />
+            <Button
+                android:id="@+id/main_button_initial_registration"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/main_button_initial_registration" />
+            <Button
+                android:id="@+id/main_button_verify_registration"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/main_button_verify_registration" />
+            <Button
+                android:id="@+id/main_button_report_call"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/main_button_report_call" />
+        </LinearLayout>
+
 
 </FrameLayout>

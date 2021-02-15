@@ -19,6 +19,7 @@ private const val PERMISSIONS_REQUEST_READ_PHONE_STATE = 10
 data class PersonalInfo (
     var MyPhoneNumber:String ="",
     var MyPhoneNumberOverride:Boolean = false,
+    var MyEmail:String="",
     var FirstName:String="",
     var LastName:String = "",
     var StreetAddress:String ="",
@@ -26,14 +27,19 @@ data class PersonalInfo (
     var City:String ="",
     var State:String = "",
     var ZIP:String =""
-        ) {
+        ):Parcelable {
 
-    companion object {
-
-        fun numbersOnly(original: String): String {
-            val numOnly: Regex = Regex("[^0-9]")
-            return original.replace(numOnly, "")
-        }
+    constructor(parcel: Parcel) : this(
+            parcel.readString()?:"",
+            parcel.readByte() != 0.toByte(),
+            parcel.readString()?:"",
+            parcel.readString()?:"",
+            parcel.readString()?:"",
+            parcel.readString()?:"",
+            parcel.readString()?:"",
+            parcel.readString()?:"",
+            parcel.readString()?:"",
+            parcel.readString()?:"") {
     }
 
     fun getContactInfo(activity: Activity):Boolean{
@@ -55,6 +61,7 @@ data class PersonalInfo (
 
         this.MyPhoneNumber =  infoBuff.MyPhoneNumber
         this.MyPhoneNumberOverride =  infoBuff.MyPhoneNumberOverride
+        this.MyEmail = infoBuff.MyEmail
         this.FirstName =  infoBuff.FirstName
         this.LastName =  infoBuff.LastName
         this.StreetAddress =  infoBuff.StreetAddress
@@ -101,7 +108,7 @@ data class PersonalInfo (
 
     fun validate():String{
 
-        MyPhoneNumber = PersonalInfo.numbersOnly(MyPhoneNumber)
+        MyPhoneNumber = numbersOnly(MyPhoneNumber)
         if( MyPhoneNumber.length >= 10 ) return "Your phone number must have at least 10 digits."
 
         val stateCodes:List<String> = "AL,AK,AZ,AR,CA,CO,CT,DE,FL,GA,HI,ID,IL,IN,IA,KS,KY,LA,ME,MD,MA,MI,MN,MS,MO,MT,NE,NV,NH,NJ,NM,NY,NC,ND,OH,OK,OR,PA,RI,SC,SD,TN,TX,UT,VT,VA,WA,WV,WI,WY,DC,GU,MH,MP,PR,VI,AE,AA,AP".split(",")
@@ -111,6 +118,38 @@ data class PersonalInfo (
     }
 
     fun isEmpty():Boolean{
-        return MyPhoneNumber.isEmpty() || FirstName.isEmpty() || LastName.isEmpty()|| StreetAddress.isEmpty()|| City.isEmpty()|| State.isEmpty() || ZIP.isEmpty()
+        return MyPhoneNumber.isEmpty() || MyEmail.isEmpty() || FirstName.isEmpty() || LastName.isEmpty()|| StreetAddress.isEmpty()|| City.isEmpty()|| State.isEmpty() || ZIP.isEmpty()
+    }
+
+    override fun writeToParcel(parcel: Parcel, flags: Int) {
+        parcel.writeString(MyPhoneNumber)
+        parcel.writeByte(if (MyPhoneNumberOverride) 1 else 0)
+        parcel.writeString(MyEmail)
+        parcel.writeString(FirstName)
+        parcel.writeString(LastName)
+        parcel.writeString(StreetAddress)
+        parcel.writeString(StreetAddress2)
+        parcel.writeString(City)
+        parcel.writeString(State)
+        parcel.writeString(ZIP)
+    }
+
+    override fun describeContents(): Int {
+        return 0
+    }
+
+    fun numbersOnly(original: String): String {
+        val numOnly: Regex = Regex("[^0-9]")
+        return original.replace(numOnly, "")
+    }
+
+    companion object CREATOR : Parcelable.Creator<PersonalInfo> {
+        override fun createFromParcel(parcel: Parcel): PersonalInfo {
+            return PersonalInfo(parcel)
+        }
+
+        override fun newArray(size: Int): Array<PersonalInfo?> {
+            return arrayOfNulls(size)
+        }
     }
 }

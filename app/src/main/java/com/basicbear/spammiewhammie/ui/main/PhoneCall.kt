@@ -4,9 +4,7 @@ import android.os.Parcel
 import android.os.Parcelable
 import android.provider.CallLog
 import android.telephony.PhoneNumberUtils
-import java.text.DateFormat
 import java.text.SimpleDateFormat
-import java.time.format.DateTimeFormatter
 import java.util.*
 
 data class PhoneCall(
@@ -15,14 +13,8 @@ data class PhoneCall(
     var type: Int = -1,
     var date: Long = -1,
     var duration: Long = -1
-):Parcelable {
-    constructor(parcel: Parcel) : this(
-            parcel.readString()?:"",
-            parcel.readString()?:"",
-            parcel.readInt(),
-            parcel.readLong(),
-            parcel.readLong()) {
-    }
+) {
+
 
     override fun toString(): String {
         return "Number: ${number}|Type: ${type}|Date: ${Date(date)}|Duration: ${duration}s"
@@ -54,25 +46,4 @@ data class PhoneCall(
         return "ERROR"
     }
 
-    override fun writeToParcel(parcel: Parcel, flags: Int) {
-        parcel.writeString(number)
-        parcel.writeString(via_number)
-        parcel.writeInt(type)
-        parcel.writeLong(date)
-        parcel.writeLong(duration)
-    }
-
-    override fun describeContents(): Int {
-        return 0
-    }
-
-    companion object CREATOR : Parcelable.Creator<PhoneCall> {
-        override fun createFromParcel(parcel: Parcel): PhoneCall {
-            return PhoneCall(parcel)
-        }
-
-        override fun newArray(size: Int): Array<PhoneCall?> {
-            return arrayOfNulls(size)
-        }
-    }
 }

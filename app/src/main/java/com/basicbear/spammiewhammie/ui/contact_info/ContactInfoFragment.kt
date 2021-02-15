@@ -1,12 +1,7 @@
 package com.basicbear.spammiewhammie.ui.contact_info
 
-import android.Manifest
-import android.Manifest.permission.READ_EXTERNAL_STORAGE
-import android.app.Person
 import android.content.Context
-import android.content.pm.PackageManager
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,28 +9,37 @@ import android.widget.Button
 import android.widget.Switch
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import com.basicbear.spammiewhammie.NavigationCallbacks
 import com.basicbear.spammiewhammie.R
-import com.basicbear.spammiewhammie.ui.main.MainFragment
-import com.basicbear.spammiewhammie.ui.main.PhoneCall
 import com.google.android.material.textfield.TextInputEditText
-import com.google.gson.Gson
-import java.io.*
 
 private const val TAG="ContactInfoFragment"
-private const val contactInfoTag = "ContactInfoParameter"
-private const val write_permission_code = 1
-private const val read_permission_code = 2
+private const val PARAM_contactInfo = TAG +"_ContactInfo"
 
-class ContactInfoFragment(
-        private val personalInfo: PersonalInfo
+class ContactInfoFragment():Fragment() {
 
-):Fragment() {
-    interface Callbacks{
-        fun onContactInfoSaveSelected()
+    companion object{
+
+        fun newInstance(contactInfo: PersonalInfo): ContactInfoFragment {
+            return ContactInfoFragment().apply {
+                    arguments=Bundle().apply {
+                    putParcelable(PARAM_contactInfo,contactInfo)
+                }
+            }
+        }
+
+    }
+
+    private lateinit var personalInfo: PersonalInfo
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        personalInfo = arguments?.getParcelable(PARAM_contactInfo)?: PersonalInfo()
     }
 
     private lateinit var myPhoneNumber: TextInputEditText
     private lateinit var myPhoneNumberOverride: Switch
+    private lateinit var myEmail: TextInputEditText
     private lateinit var firstName: TextInputEditText
     private lateinit var lastName: TextInputEditText
     private lateinit var streetAddress1: TextInputEditText
@@ -45,12 +49,12 @@ class ContactInfoFragment(
     private lateinit var zipInfo: TextInputEditText
     private lateinit var saveButton: Button
 
-    private var callbacks: Callbacks? = null
+    private var callbacks: NavigationCallbacks? = null
     private val filesDir = context?.applicationContext?.filesDir
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        callbacks = context as Callbacks?
+        callbacks = context as NavigationCallbacks?
     }
 
     override fun onCreateView(
@@ -66,6 +70,9 @@ class ContactInfoFragment(
 
         myPhoneNumberOverride = view.findViewById(R.id.contact_info_form_switch_phone_number_override)
         myPhoneNumberOverride.isChecked = personalInfo.MyPhoneNumberOverride
+
+        myEmail = view.findViewById(R.id.contact_info_form_email)
+        myEmail.setText(personalInfo.MyEmail)
 
         firstName = view.findViewById(R.id.contact_info_form_first_name)
         firstName.setText(personalInfo.FirstName)
@@ -97,7 +104,7 @@ class ContactInfoFragment(
             }else{
                 personalInfo.GetThisPhoneNumber(requireActivity())
             }
-
+            personalInfo.MyEmail = myEmail.text.toString()
             personalInfo.FirstName = firstName.text.toString()
             personalInfo.LastName = lastName.text.toString()
             personalInfo.StreetAddress = streetAddress1.text.toString()
@@ -109,7 +116,8 @@ class ContactInfoFragment(
             val entryValidation = personalInfo.validate()
 
             if(!entryValidation.isEmpty() ) {
-                callbacks?.onContactInfoSaveSelected()
+                personalInfo.saveToFile(requireActivity())
+                callbacks?.goto_main()
             }else{
                 Toast.makeText(requireContext(),entryValidation, Toast.LENGTH_LONG)
             }
