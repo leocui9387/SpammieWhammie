@@ -6,4 +6,5 @@ interface NavigationCallbacks {
     fun goto_contactInfo()
     fun goto_main()
     fun goto_verify_registration()
+    fun goto_reportHistory()
 }

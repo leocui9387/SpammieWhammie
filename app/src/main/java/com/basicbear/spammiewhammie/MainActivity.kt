@@ -12,6 +12,8 @@ import com.basicbear.spammiewhammie.ui.contact_info.ContactInfoFragment
 import com.basicbear.spammiewhammie.ui.contact_info.PersonalInfo
 import com.basicbear.spammiewhammie.ui.main.MainFragment
 import com.basicbear.spammiewhammie.ui.gov.ReportFragment
+import com.basicbear.spammiewhammie.ui.history.ReportHistoryDetailFragment
+import com.basicbear.spammiewhammie.ui.history.ReportHistoryFragment
 
 
 private val TAG = "MainActivity"
@@ -23,6 +25,8 @@ class MainActivity : AppCompatActivity(), NavigationCallbacks
     private lateinit var contactInfoFragment: ContactInfoFragment
     private lateinit var contactInfo: PersonalInfo
     private lateinit var reportFragment: ReportFragment
+    private lateinit var reportHistoryFragment: ReportHistoryFragment
+    private lateinit var reportHistoryDetailFragment: ReportHistoryDetailFragment
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,8 +54,12 @@ class MainActivity : AppCompatActivity(), NavigationCallbacks
                 (reportFragment.isVisible && reportFragment.WebViewCanGoBack())
         ){
                 reportFragment.WebViewGoBack()
-        }
-        else {
+        }else if(
+                this::reportHistoryDetailFragment.isInitialized &&
+                reportHistoryDetailFragment.isVisible
+        ){
+            reportFragment.WebViewGoBack()
+        } else {
             goto_main()
         }
     }
@@ -68,8 +76,19 @@ class MainActivity : AppCompatActivity(), NavigationCallbacks
         goto_gov_site(getString(R.string.federal_verify_registration_url_postfix),false)
     }
 
+    override fun goto_reportHistory(){
+        if(!this::reportHistoryFragment.isInitialized ){
+            reportHistoryFragment = ReportHistoryFragment.newInstance()
+        }
+
+        supportFragmentManager.beginTransaction()
+                .replace(R.id.main_fragment_container, reportHistoryFragment)
+                .commit()
+    }
+
     override fun goto_contactInfo() {
-        contactInfoFragment = ContactInfoFragment.newInstance(contactInfo)
+        if(!this::contactInfoFragment.isInitialized )
+            contactInfoFragment = ContactInfoFragment.newInstance(contactInfo)
 
         supportFragmentManager.beginTransaction()
             .replace(R.id.main_fragment_container, contactInfoFragment)
