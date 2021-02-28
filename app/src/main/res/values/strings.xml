@@ -25,4 +25,15 @@
     <string name="main_button_verify_registration">Verify Registration</string>
     <string name="main_tool_bar_title">Do Not Call Assistant</string>
     <string name="contact_info_form_email_hint">Email</string>
+    <string name="default_phone_number">No Phone Number</string>
+    <string name="default_call_date">No Call Date</string>
+    <string name="report_history_item_isMobileCall">mobile call</string>
+    <string name="report_history_item_haveDoneBusiness">prior business relation</string>
+    <string name="report_history_item_askedToStop">asked to stop</string>
+    <string name="report_history_detail_companyName_tag">Caller Company Name:</string>
+    <string name="report_history_detail_subjectMatter_tag">Subject Matter:</string>
+    <string name="report_history_detail_comments_tag">Comments : </string>
+    <string name="main_button_report_history">Report History</string>
+    <string name="report_history_title">Report History</string>
+    <string name="report_history_counter">Number of Reports : </string>
 </resources>

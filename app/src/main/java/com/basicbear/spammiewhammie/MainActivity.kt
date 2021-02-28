@@ -1,18 +1,14 @@
 package com.basicbear.spammiewhammie
 
-import android.accessibilityservice.AccessibilityService
-import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.telecom.TelecomManager
-import android.view.accessibility.AccessibilityEvent
 import androidx.appcompat.app.AppCompatActivity
+import com.basicbear.spammiewhammie.database.Report
 
 import com.basicbear.spammiewhammie.ui.contact_info.ContactInfoFragment
 import com.basicbear.spammiewhammie.ui.contact_info.PersonalInfo
 import com.basicbear.spammiewhammie.ui.main.MainFragment
 import com.basicbear.spammiewhammie.ui.gov.ReportFragment
-import com.basicbear.spammiewhammie.ui.history.ReportHistoryDetailFragment
 import com.basicbear.spammiewhammie.ui.history.ReportHistoryFragment
 
 
@@ -26,7 +22,7 @@ class MainActivity : AppCompatActivity(), NavigationCallbacks
     private lateinit var contactInfo: PersonalInfo
     private lateinit var reportFragment: ReportFragment
     private lateinit var reportHistoryFragment: ReportHistoryFragment
-    private lateinit var reportHistoryDetailFragment: ReportHistoryDetailFragment
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -54,26 +50,25 @@ class MainActivity : AppCompatActivity(), NavigationCallbacks
                 (reportFragment.isVisible && reportFragment.WebViewCanGoBack())
         ){
                 reportFragment.WebViewGoBack()
-        }else if(
-                this::reportHistoryDetailFragment.isInitialized &&
-                reportHistoryDetailFragment.isVisible
-        ){
-            reportFragment.WebViewGoBack()
         } else {
             goto_main()
         }
     }
 
     override fun goto_registration() {
-        goto_gov_site(getString(R.string.federal_registration_url_postfix),false)
+        goto_gov_site(getString(R.string.federal_registration_url_postfix),false,null)
     }
 
     override fun goto_report() {
-        goto_gov_site(getString(R.string.federal_report_url_postfix),true)
+        goto_gov_site(getString(R.string.federal_report_url_postfix),true,null)
+    }
+
+    override fun goto_report(report: Report) {
+        goto_gov_site(getString(R.string.federal_report_url_postfix),true,report)
     }
 
     override fun goto_verify_registration() {
-        goto_gov_site(getString(R.string.federal_verify_registration_url_postfix),false)
+        goto_gov_site(getString(R.string.federal_verify_registration_url_postfix),false,null)
     }
 
     override fun goto_reportHistory(){
@@ -101,7 +96,7 @@ class MainActivity : AppCompatActivity(), NavigationCallbacks
             .commit()
     }
 
-    private fun goto_gov_site(path_feature:String, open_window_button_visibility:Boolean){
+    private fun goto_gov_site(path_feature:String, open_window_button_visibility:Boolean,report: Report?){
         val builder = Uri.Builder()
 
         builder.scheme("https")
@@ -110,7 +105,7 @@ class MainActivity : AppCompatActivity(), NavigationCallbacks
                 .fragment(getString(R.string.federal_url_step1))
 
         val uri = builder.build()
-        reportFragment = ReportFragment.newInstance(contactInfo,uri.toString(),open_window_button_visibility)
+        reportFragment = ReportFragment.newInstance(contactInfo,uri.toString(),open_window_button_visibility,report)
 
         supportFragmentManager.beginTransaction()
                 .replace(R.id.main_fragment_container, reportFragment)

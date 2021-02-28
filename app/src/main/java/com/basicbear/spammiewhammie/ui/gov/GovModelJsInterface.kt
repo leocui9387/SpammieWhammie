@@ -2,7 +2,6 @@ package com.basicbear.spammiewhammie.ui.gov
 
 import android.util.Log
 import android.webkit.JavascriptInterface
-import com.basicbear.spammiewhammie.Validation.GovModel
 import com.google.gson.Gson
 
 private val TAG = "GovModelJsInterface"

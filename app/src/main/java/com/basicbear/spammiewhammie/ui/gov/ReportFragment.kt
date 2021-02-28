@@ -9,8 +9,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.webkit.WebResourceRequest
-import android.webkit.WebResourceResponse
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.Button
@@ -18,6 +16,7 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.basicbear.spammiewhammie.NavigationCallbacks
 import com.basicbear.spammiewhammie.R
+import com.basicbear.spammiewhammie.database.Report
 import com.basicbear.spammiewhammie.ui.contact_info.PersonalInfo
 
 private const val TAG = "ReportFragment"
@@ -32,7 +31,8 @@ class ReportFragment():Fragment() {
         fun newInstance(
                 contactInfo: PersonalInfo,
                 task_url: String,
-                show_open_window_button:Boolean
+                show_open_window_button:Boolean,
+                report: Report?
         ): ReportFragment {
             return ReportFragment().apply {
                 arguments = Bundle().apply {
@@ -89,7 +89,6 @@ class ReportFragment():Fragment() {
 
         doneButton = view.findViewById(R.id.report_done_button)
         doneButton.setOnClickListener {
-
 
             callbacks?.goto_main()
         }

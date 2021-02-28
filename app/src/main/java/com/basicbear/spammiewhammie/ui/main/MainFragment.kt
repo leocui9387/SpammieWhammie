@@ -44,6 +44,7 @@ class MainFragment() : Fragment() {
     private lateinit var verifyRegistrationButton: Button
     private lateinit var contactInfoButton: Button
     private lateinit var reportButton:Button
+    private lateinit var reportHistoryButton:Button
 
     override fun onCreateView(
             inflater: LayoutInflater, container: ViewGroup?,
@@ -70,6 +71,13 @@ class MainFragment() : Fragment() {
         reportButton.setOnClickListener {
             callbacks?.goto_report()
         }
+
+        reportHistoryButton = view.findViewById(R.id.main_button_report_history)
+        reportHistoryButton.setOnClickListener {
+            callbacks?.goto_reportHistory()
+        }
+
+
 
         MobileAds.initialize(context)
         adView = view.findViewById(R.id.main_adView)
