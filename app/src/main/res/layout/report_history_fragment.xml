@@ -27,7 +27,7 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/report_history_fragment_recycler_view"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
             app:layout_constraintVertical_bias="0"
             app:layout_constraintBottom_toTopOf="@id/report_history_adView"
             app:layout_constraintTop_toBottomOf="@id/report_history_fragment_tool_bar">
@@ -40,13 +40,12 @@
 
             android:id="@+id/report_history_adView"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="@dimen/ad_height"
             android:layout_alignParentBottom="true"
             ads:adSize="BANNER"
-            ads:adUnitId="ca-app-pub-2984887454634255/2175184119"
+            ads:adUnitId="@string/ad_id"
             app:layout_constraintBottom_toBottomOf="parent"
             />
-
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

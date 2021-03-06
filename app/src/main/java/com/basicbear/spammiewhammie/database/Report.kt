@@ -35,7 +35,7 @@ data class Report(
 ):Parcelable {
 
     constructor(parcel: Parcel) : this(
-        TODO("id"),
+        UUID.fromString(parcel.readString()?:"parsel error"),
         parcel.readString()?:"parsel error",
         parcel.readString()?:"parsel error",
         parcel.readString()?:"parsel error",

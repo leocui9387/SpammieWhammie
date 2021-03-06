@@ -7,6 +7,7 @@ import com.basicbear.spammiewhammie.database.HistoricalReports
 import com.basicbear.spammiewhammie.database.Report
 import com.basicbear.spammiewhammie.database.ReportDAO
 import java.lang.IllegalStateException
+import java.util.*
 import java.util.concurrent.Executors
 
 private val DATABASE_NAME = "report_database"
@@ -38,11 +39,22 @@ class ReportRepository private constructor(context: Context){
     private val executor= Executors.newSingleThreadExecutor()
 
     fun getReports():LiveData<List<Report>> = reportDAO.getReports()
-    fun getReport(receipient_number:String,caller_number:String, date: String,time:String,minute:String):LiveData<Report?> = reportDAO.getReport(receipient_number,caller_number,date,time,minute)
+    fun getReport(uuid:UUID):Report? = reportDAO.getReport(uuid)
 
     fun update(report:Report){
         executor.execute {
             reportDAO.update(report)
+        }
+    }
+
+    fun add(report: Report){
+        executor.execute {
+            reportDAO.add(report)
+        }
+    }
+    fun delete(report: Report){
+        executor.execute {
+            reportDAO.delete(report)
         }
     }
 

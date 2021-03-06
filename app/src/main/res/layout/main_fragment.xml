@@ -2,11 +2,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-
-        <LinearLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:layout_height="match_parent">
 
             <androidx.appcompat.widget.Toolbar
                 android:id="@+id/main_toolbar"
@@ -17,48 +15,56 @@
                 android:theme="?attr/actionBarTheme"
                 app:title="@string/main_tool_bar_title"
                 app:titleTextColor="@color/yellow"
+                app:layout_constraintTop_toTopOf="parent"
                 />
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:orientation="vertical"
+                app:layout_constraintTop_toBottomOf="@id/main_toolbar"
+                app:layout_constraintBottom_toTopOf="@id/main_adView">
+
+
+                <Button
+                    android:id="@+id/main_button_contact_info"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/main_button_contact_info" />
+                <Button
+                    android:id="@+id/main_button_initial_registration"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/main_button_initial_registration" />
+                <Button
+                    android:id="@+id/main_button_verify_registration"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/main_button_verify_registration" />
+                <Button
+                    android:id="@+id/main_button_report_call"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/main_button_report_call" />
+                <Button
+                    android:id="@+id/main_button_report_history"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/main_button_report_history" />
+
+            </LinearLayout>
             <com.google.android.gms.ads.AdView
                 xmlns:ads="http://schemas.android.com/apk/res-auto"
                 android:id="@+id/main_adView"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="@dimen/ad_height"
                 android:layout_alignParentBottom="true"
                 ads:adSize="BANNER"
-                ads:adUnitId="ca-app-pub-2984887454634255/2175184119"
+                ads:adUnitId="@string/ad_id"
                 app:layout_constraintBottom_toBottomOf="parent"
                 />
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
-
-
-
-            <Button
-                android:id="@+id/main_button_contact_info"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/main_button_contact_info" />
-            <Button
-                android:id="@+id/main_button_initial_registration"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/main_button_initial_registration" />
-            <Button
-                android:id="@+id/main_button_verify_registration"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/main_button_verify_registration" />
-            <Button
-                android:id="@+id/main_button_report_call"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/main_button_report_call" />
-            <Button
-                android:id="@+id/main_button_report_history"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/main_button_report_history" />
-        </LinearLayout>
 
 
 </FrameLayout>

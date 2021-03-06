@@ -6,6 +6,7 @@ class SpammieWhammieApplication: Application() {
     override fun onCreate() {
         super.onCreate()
         ReportRepository.initialize(this)
+
     }
 
 }

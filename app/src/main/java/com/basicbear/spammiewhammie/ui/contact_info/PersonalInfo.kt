@@ -18,7 +18,6 @@ private const val PERMISSIONS_REQUEST_READ_PHONE_STATE = 10
 
 data class PersonalInfo (
     var MyPhoneNumber:String ="",
-    var MyPhoneNumberOverride:Boolean = false,
     var MyEmail:String="",
     var FirstName:String="",
     var LastName:String = "",
@@ -31,7 +30,6 @@ data class PersonalInfo (
 
     constructor(parcel: Parcel) : this(
             parcel.readString()?:"",
-            parcel.readByte() != 0.toByte(),
             parcel.readString()?:"",
             parcel.readString()?:"",
             parcel.readString()?:"",
@@ -60,7 +58,6 @@ data class PersonalInfo (
         infoBuff = gson.fromJson(dataJSON,PersonalInfo::class.java)
 
         this.MyPhoneNumber =  infoBuff.MyPhoneNumber
-        this.MyPhoneNumberOverride =  infoBuff.MyPhoneNumberOverride
         this.MyEmail = infoBuff.MyEmail
         this.FirstName =  infoBuff.FirstName
         this.LastName =  infoBuff.LastName
@@ -90,22 +87,6 @@ data class PersonalInfo (
 
     }
 
-    fun GetThisPhoneNumber(activity: Activity){
-        if(MyPhoneNumberOverride) return
-
-        if(activity.checkSelfPermission(Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
-            activity.requestPermissions(
-                    arrayOf(Manifest.permission.READ_PHONE_STATE),
-                    PERMISSIONS_REQUEST_READ_PHONE_STATE
-            )
-        }
-
-            val tMgr: TelephonyManager = activity.getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
-            MyPhoneNumber = tMgr.line1Number?:""
-            saveToFile(activity)
-
-    }
-
     fun validate():String{
 
         MyPhoneNumber = numbersOnly(MyPhoneNumber)
@@ -113,6 +94,8 @@ data class PersonalInfo (
 
         val stateCodes:List<String> = "AL,AK,AZ,AR,CA,CO,CT,DE,FL,GA,HI,ID,IL,IN,IA,KS,KY,LA,ME,MD,MA,MI,MN,MS,MO,MT,NE,NV,NH,NJ,NM,NY,NC,ND,OH,OK,OR,PA,RI,SC,SD,TN,TX,UT,VT,VA,WA,WV,WI,WY,DC,GU,MH,MP,PR,VI,AE,AA,AP".split(",")
         if( stateCodes.contains(State) ) return "Your state code is invalid."
+
+        if(this.isEmpty()) return "All fields with a * must be filled."
 
         return ""
     }
@@ -123,7 +106,6 @@ data class PersonalInfo (
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeString(MyPhoneNumber)
-        parcel.writeByte(if (MyPhoneNumberOverride) 1 else 0)
         parcel.writeString(MyEmail)
         parcel.writeString(FirstName)
         parcel.writeString(LastName)

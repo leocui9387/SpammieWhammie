@@ -144,16 +144,30 @@
                 android:layout_height="1dp"
                 android:background="?android:attr/listDivider" />
 
-        <Button
-            android:id="@+id/report_history_detail_report_button"
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Report" />
+            android:orientation="horizontal">
+            <Button
+                android:id="@+id/report_history_detail_delete_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:backgroundTint="@color/red"
+                android:text="@string/report_history_item_delete_button" />
+
+            <Button
+                android:id="@+id/report_history_detail_report_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:text="@string/report_history_item_report_button" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
     </LinearLayout>
 
     </FrameLayout>
-
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

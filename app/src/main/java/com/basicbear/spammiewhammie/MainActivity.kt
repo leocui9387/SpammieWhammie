@@ -2,6 +2,7 @@ package com.basicbear.spammiewhammie
 
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import com.basicbear.spammiewhammie.database.Report
 
@@ -10,6 +11,7 @@ import com.basicbear.spammiewhammie.ui.contact_info.PersonalInfo
 import com.basicbear.spammiewhammie.ui.main.MainFragment
 import com.basicbear.spammiewhammie.ui.gov.ReportFragment
 import com.basicbear.spammiewhammie.ui.history.ReportHistoryFragment
+import com.google.android.gms.ads.MobileAds
 
 
 private val TAG = "MainActivity"
@@ -27,6 +29,8 @@ class MainActivity : AppCompatActivity(), NavigationCallbacks
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        MobileAds.initialize(this)
+
         contactInfo = PersonalInfo()
         contactInfo.getContactInfo(this)
         mainFragment = MainFragment.newInstance(contactInfo)
@@ -42,15 +46,16 @@ class MainActivity : AppCompatActivity(), NavigationCallbacks
 
     override fun onBackPressed() {
 
-        if(mainFragment.isVisible())  {
+        if(mainFragment.isVisible()){
             super.onBackPressed()
         }
-        else if(
-                this::reportFragment.isInitialized &&
-                (reportFragment.isVisible && reportFragment.WebViewCanGoBack())
-        ){
+        else if(this::reportFragment.isInitialized && (reportFragment.isVisible && reportFragment.WebViewCanGoBack())){
                 reportFragment.WebViewGoBack()
-        } else {
+        }
+        else if(this::contactInfoFragment.isInitialized && (contactInfoFragment.isVisible && contactInfo.isEmpty())){
+            super.onBackPressed()
+        }
+        else {
             goto_main()
         }
     }
@@ -101,9 +106,10 @@ class MainActivity : AppCompatActivity(), NavigationCallbacks
 
         builder.scheme("https")
                 .authority(getString(R.string.federal_report_url))
+                .appendPath("Apps") // REMOVE IN PRODUCTION
                 .appendPath(path_feature)
                 .fragment(getString(R.string.federal_url_step1))
-
+        Log.d(TAG,"URL String" + builder.toString())
         val uri = builder.build()
         reportFragment = ReportFragment.newInstance(contactInfo,uri.toString(),open_window_button_visibility,report)
 

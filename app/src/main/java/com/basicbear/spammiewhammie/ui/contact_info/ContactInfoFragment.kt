@@ -11,6 +11,9 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.basicbear.spammiewhammie.NavigationCallbacks
 import com.basicbear.spammiewhammie.R
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.AdView
+import com.google.android.gms.ads.MobileAds
 import com.google.android.material.textfield.TextInputEditText
 
 private const val TAG="ContactInfoFragment"
@@ -37,8 +40,8 @@ class ContactInfoFragment():Fragment() {
         personalInfo = arguments?.getParcelable(PARAM_contactInfo)?: PersonalInfo()
     }
 
+    private lateinit var adView: AdView
     private lateinit var myPhoneNumber: TextInputEditText
-    private lateinit var myPhoneNumberOverride: Switch
     private lateinit var myEmail: TextInputEditText
     private lateinit var firstName: TextInputEditText
     private lateinit var lastName: TextInputEditText
@@ -50,7 +53,7 @@ class ContactInfoFragment():Fragment() {
     private lateinit var saveButton: Button
 
     private var callbacks: NavigationCallbacks? = null
-    private val filesDir = context?.applicationContext?.filesDir
+
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -65,11 +68,11 @@ class ContactInfoFragment():Fragment() {
 
         val view = inflater.inflate(R.layout.contact_info_fragment, container, false)
 
+        adView = view.findViewById(R.id.contact_info_adView)
+        adView.loadAd(AdRequest.Builder().build())
+
         myPhoneNumber = view.findViewById(R.id.contact_info_form_phone_number_override)
         myPhoneNumber.setText(personalInfo.MyPhoneNumber)
-
-        myPhoneNumberOverride = view.findViewById(R.id.contact_info_form_switch_phone_number_override)
-        myPhoneNumberOverride.isChecked = personalInfo.MyPhoneNumberOverride
 
         myEmail = view.findViewById(R.id.contact_info_form_email)
         myEmail.setText(personalInfo.MyEmail)
@@ -98,12 +101,7 @@ class ContactInfoFragment():Fragment() {
         saveButton = view.findViewById(R.id.contact_info_save_button)
         saveButton.setOnClickListener {
 
-            personalInfo.MyPhoneNumberOverride = myPhoneNumberOverride.isChecked
-            if(personalInfo.MyPhoneNumberOverride){
-                personalInfo.MyPhoneNumber = myPhoneNumber.text.toString()
-            }else{
-                personalInfo.GetThisPhoneNumber(requireActivity())
-            }
+            personalInfo.MyPhoneNumber = myPhoneNumber.text.toString()
             personalInfo.MyEmail = myEmail.text.toString()
             personalInfo.FirstName = firstName.text.toString()
             personalInfo.LastName = lastName.text.toString()
@@ -119,10 +117,11 @@ class ContactInfoFragment():Fragment() {
                 personalInfo.saveToFile(requireActivity())
                 callbacks?.goto_main()
             }else{
-                Toast.makeText(requireContext(),entryValidation, Toast.LENGTH_LONG)
+                Toast.makeText(requireContext(),entryValidation, Toast.LENGTH_LONG).show()
             }
 
         }
+
 
 
         return view

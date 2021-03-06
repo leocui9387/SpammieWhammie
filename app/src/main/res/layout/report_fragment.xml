@@ -9,11 +9,10 @@
         xmlns:ads="http://schemas.android.com/apk/res-auto"
         android:id="@+id/report_adView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="@dimen/ad_height"
         android:layout_alignParentTop="true"
         ads:adSize="BANNER"
-        ads:adUnitId="ca-app-pub-2984887454634255/2175184119"
-
+        ads:adUnitId="@string/ad_id"
         />
     <WebView
         android:id="@+id/report_web_view"
@@ -23,9 +22,6 @@
         android:layout_below="@id/report_adView"
         >
     </WebView>
-
-
-
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/repot_command_bar"

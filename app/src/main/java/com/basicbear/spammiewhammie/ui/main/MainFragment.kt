@@ -52,6 +52,9 @@ class MainFragment() : Fragment() {
     ): View {
         val view = inflater.inflate(R.layout.main_fragment, container, false)
 
+        adView = view.findViewById(R.id.main_adView)
+        adView.loadAd(AdRequest.Builder().build())
+
         initialRegistrationButton = view.findViewById(R.id.main_button_initial_registration)
         initialRegistrationButton.setOnClickListener {
             callbacks?.goto_registration()
@@ -73,16 +76,13 @@ class MainFragment() : Fragment() {
         }
 
         reportHistoryButton = view.findViewById(R.id.main_button_report_history)
+        //reportHistoryButton.visibility = View.GONE
         reportHistoryButton.setOnClickListener {
             callbacks?.goto_reportHistory()
         }
 
 
 
-        MobileAds.initialize(context)
-        adView = view.findViewById(R.id.main_adView)
-        val adRequest:AdRequest = AdRequest.Builder().build()
-        adView.loadAd(adRequest)
 
         return view
     }
