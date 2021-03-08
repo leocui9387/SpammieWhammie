@@ -38,16 +38,16 @@ class ReportFragment():Fragment() {
                 contactInfo: PersonalInfo,
                 task_url: String,
                 show_open_window_button:Boolean,
-                report_id: UUID?
+                report: Report?
         ): ReportFragment {
             return ReportFragment().apply {
                 arguments = Bundle().apply {
                     putParcelable(PARAM_contactInfo,contactInfo)
                     putString(PARAM_uri,task_url)
-                    putBoolean(PARAM_showOpenWindow,show_open_window_button )
-                    if(report_id != null){
-                        putString(PARAM_report_id, report_id.toString())
-                    }
+                    putBoolean(PARAM_showOpenWindow,show_open_window_button)
+                    if(report != null)
+                        putParcelable(PARAM_report_id, report)
+
                 }
             }
         }
@@ -83,11 +83,8 @@ class ReportFragment():Fragment() {
         task_url = Uri.parse(arguments?.getString(PARAM_uri)?:"")
         show_open_window_button = arguments?.getBoolean(PARAM_showOpenWindow)
 
-        val reportID = arguments?.getString(PARAM_report_id)?:""
-        if(reportID.length != 0){
-            val reportRepo = ReportRepository.get()
-            report = reportRepo.getReport(UUID.fromString(reportID))
-        }
+        if(arguments?.containsKey(PARAM_report_id)?:false)
+            report = arguments?.getParcelable(PARAM_report_id)
 
 
         requireActivity().actionBar?.hide()
@@ -193,11 +190,13 @@ class ReportFragment():Fragment() {
             url.contains(getString(R.string.federal_report_url_postfix), true) && report != null ->{
                 if(url.contains("step1", true)){
                     "$(\"#PhoneTextBox\").val(\"${report!!.phoneNumber}\"); " +
+                    "$(\"#DateOfCallTextBox\").val(\"${report!!.dateOfCall}\"); " +
+
                     "$(\"#TimeOfCallDropDownList\").val(\"${report!!.timeOfCall}\"); " +
                     "$(\"#ddlMinutes\").val(\"${report!!.minuteOfCall}\"); " +
                     "$(\"#PrerecordMessage${ if(report!!.wasPrerecorded.equals("Y")) "YES" else "NO"}RadioButton\").prop('checked', true); " +
                     "$(\"#${ if(report!!.isMobileCall.equals("Y")) "PhoneCallRadioButton" else "MobileTextMessageRadioButton"}\").prop('checked', true); " +
-                    "$(\"#ddlSubjectMatter\").value = \"${report!!.subjectMatter}\"; "
+                    "$(\"#ddlSubjectMatter\").val(${report!!.subjectMatter}); "
 
                 }else{
                     "$(\"#CallerPhoneNumberTextBox\").val(\"${report!!.companyPhoneNumber}\"); "+

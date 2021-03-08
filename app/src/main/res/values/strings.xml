@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">Do Not Call Assistant</string>
-    <string name="federal_report_url">basicbearengineering.azurewebsites.net</string><!-- www.donotcall.gov ,  -->
-    <string name="federal_report_url_postfix">Test</string><!-- report.html ,  -->
+    <string name="federal_report_url">www.donotcall.gov</string><!-- ,basicbearengineering.azurewebsites.net  -->
+    <string name="federal_report_url_postfix">report.html</string><!--  , Test -->
     <string name="federal_registration_url_postfix">register.html</string>
     <string name="federal_verify_registration_url_postfix">verify.html</string>
     <string name="federal_url_step1">step1</string>
@@ -36,15 +36,15 @@
     <string name="main_button_report_history">Report History</string>
     <string name="report_history_title">Report History</string>
     <string name="report_history_counter">Number of Reports : </string>
-    <string name="ad_id">ca-app-pub-3940256099942544/6300978111</string>
+    <string name="ad_id">ca-app-pub-3940256099942544/6300978111</string><!--TEST :  ;ACTUAL : ca-app-pub-2984887454634255/2175184119 -->
     <string name="report_history_item_report_button">Report</string>
-    <string name="report_history_item_delete_button">Delete</string><!--TEST :  ;ACTUAL : ca-app-pub-2984887454634255/2175184119 -->
+    <string name="report_history_item_delete_button">Delete</string>
 
 </resources>
 
     <!--Test to Actual Check List
-     1)
-
-
+     1) MainActivity.kt remove the .appendPath("Apps") in goto_gov_site
+     2) Change Ad id
+     3) Change strings: federal_report_url, federal_report_url_postfix
 
      -->

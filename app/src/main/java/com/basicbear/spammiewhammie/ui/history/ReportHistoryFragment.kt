@@ -12,26 +12,20 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
-
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.basicbear.spammiewhammie.NavigationCallbacks
 import com.basicbear.spammiewhammie.R
-import com.basicbear.spammiewhammie.ReportRepository
 import com.basicbear.spammiewhammie.database.Report
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.AdView
 import com.google.android.material.chip.Chip
-import com.google.android.material.floatingactionbutton.FloatingActionButton
-import java.text.DateFormat
+
 
 class ReportHistoryFragment:Fragment() {
     companion object{
         fun newInstance():ReportHistoryFragment {
-
-
             return ReportHistoryFragment()
         }
 
@@ -106,16 +100,6 @@ class ReportHistoryFragment:Fragment() {
 
         private lateinit var report: Report
 
-        override fun onClick(v: View?) {
-
-            if(detailFrame.isVisible){
-                detailFrame.visibility = View.GONE
-            }
-            else{
-                detailFrame.visibility = View.VISIBLE
-            }
-
-        }
 
         fun bind(report: Report,position: Int){
             this.report = report
@@ -145,6 +129,15 @@ class ReportHistoryFragment:Fragment() {
 
             detailFrame = itemView.findViewById(R.id.report_history_item_phone_call_details)
             summaryFrame = itemView.findViewById(R.id.report_history_item_report_summary)
+
+            summaryFrame.setOnClickListener{
+                if(detailFrame.isVisible){
+                    detailFrame.visibility = View.GONE
+                }
+                else{
+                    detailFrame.visibility = View.VISIBLE
+                }
+            }
 
 
             reportButton = itemView.findViewById(R.id.report_history_detail_report_button)
@@ -181,12 +174,15 @@ class ReportHistoryFragment:Fragment() {
             chip.setTextColor(ContextCompat.getColor(context!!,R.color.yellow))
         }
 
+        override fun onClick(v: View?) {
+            TODO("Not yet implemented")
+        }
+
     }
 
     private inner class ReportAdapter(var reports: List<Report>):RecyclerView.Adapter<ReportHolder>(){
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ReportHolder {
             val view = layoutInflater.inflate(viewType, parent,false)
-
 
             return ReportHolder(view)
         }

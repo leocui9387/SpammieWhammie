@@ -106,7 +106,7 @@ class MainActivity : AppCompatActivity(), NavigationCallbacks
 
         builder.scheme("https")
                 .authority(getString(R.string.federal_report_url))
-                .appendPath("Apps") // REMOVE IN PRODUCTION
+                //.appendPath("Apps") // REMOVE IN PRODUCTION
                 .appendPath(path_feature)
                 .fragment(getString(R.string.federal_url_step1))
         Log.d(TAG,"URL String" + builder.toString())

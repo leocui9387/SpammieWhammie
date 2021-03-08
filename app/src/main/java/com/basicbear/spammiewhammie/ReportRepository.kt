@@ -39,7 +39,7 @@ class ReportRepository private constructor(context: Context){
     private val executor= Executors.newSingleThreadExecutor()
 
     fun getReports():LiveData<List<Report>> = reportDAO.getReports()
-    fun getReport(uuid:UUID):Report? = reportDAO.getReport(uuid)
+    fun getReport(uuid:UUID):LiveData<Report> = reportDAO.getReport(uuid)
 
     fun update(report:Report){
         executor.execute {

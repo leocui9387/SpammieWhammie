@@ -1,15 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="js_gov_model_saver_prod">
-        $( document ).ajaxComplete(function( event, request, settings ) {
-            if(settings.url.includes(\'save-complaint\')){
-                var model_string = JSON.stringify(_model);
-                var request_string = JSON.stringify(request);
-                spammiewhammie.passModel(model_string, request_string);
-            }
-        });
-    </string>
-
     <string name="js_gov_model_saver">
 
         $( document ).ajaxComplete(function( event, request, settings ) {

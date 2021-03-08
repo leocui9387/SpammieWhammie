@@ -9,8 +9,8 @@ interface ReportDAO {
     @Query("SELECT * FROM historical_reports")
     fun getReports(): LiveData<List<Report>>
 
-//    @Query("SELECT * FROM historical_reports WHERE id = :uuid")
-//    fun getReport(uuid: UUID):Report?
+    @Query("SELECT * FROM historical_reports WHERE id = :uuid")
+    fun getReport(uuid: UUID):LiveData<Report>
 
     @Update
     fun update(report:Report)
