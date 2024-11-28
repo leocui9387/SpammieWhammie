@@ -1,5 +1,6 @@
 # SpammieWhammie
 
+**A projected I did during the pandemic to learn more about Android development. Definitely PTSD levels of design pattern overload.**
 
 ## History of Architectural Changes
 - Will give up on the JavaScript based input update. Instead, the Do Not Call website **report.js** will be reverse engineered. See reportJS.md for notes on reverse engineering.
